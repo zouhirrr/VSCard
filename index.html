@@ -1,154 +1,42 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>Qrestige Pro | بطاقة العمل الذكية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+// استبدل وظيفة generateVCard في الكود السابق بهذا التحديث الجوهري:
 
-    <style>
-        :root { --brand: #0f172a; --accent: #6366f1; }
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
-        body { background: #f1f5f9; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        .sidebar { width: 400px; background: white; border-left: 1px solid #e2e8f0; padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
-        .logo { font-weight: 900; font-size: 28px; text-align: center; color: var(--brand); margin-bottom: 20px; }
-        
-        .field-group { margin-bottom: 12px; }
-        .label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        input[type="text"], input[type="email"], input[type="tel"] { 
-            width: 100%; padding: 10px; border-radius: 8px; border: 1.5px solid #f1f5f9; outline: none; font-size: 14px;
-        }
-        input:focus { border-color: var(--accent); }
+function generateVCard() {
+    const name = document.getElementById('v-name').value || "اسم المستخدم";
+    const title = document.getElementById('v-title').value || "المسمى الوظيفي";
+    const phone = document.getElementById('v-phone').value || "";
+    const email = document.getElementById('v-email').value || "";
+    const web = document.getElementById('v-web').value || "";
+    const c1 = document.getElementById('c1').value;
+    const c2 = document.getElementById('c2').value;
+    const isTrans = document.getElementById('is-trans').checked;
 
-        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; background: #f8fafc; }
-        #vcard-frame { 
-            background: white; padding: 50px; border-radius: 40px; 
-            display: flex; flex-direction: column; align-items: center; width: 480px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.05);
-        }
-        #vcard-frame.designer-mode { background: transparent; box-shadow: none; }
-
-        .btn-main { background: var(--brand); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 15px; }
-        .btn-pdf { background: #fff; color: var(--brand); border: 2px solid var(--brand); padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-    </style>
-</head>
-<body>
-
-    <aside class="sidebar">
-        <div class="logo">Qrestige V-Card</div>
-        
-        <div class="field-group">
-            <span class="label">الاسم الكامل</span>
-            <input type="text" id="v-name" placeholder="مثلاً: أحمد محمد" oninput="generateVCard()">
-        </div>
-        <div class="field-group">
-            <span class="label">المسمى الوظيفي</span>
-            <input type="text" id="v-title" placeholder="مدير تصميم" oninput="generateVCard()">
-        </div>
-        <div class="field-group">
-            <span class="label">رقم الهاتف</span>
-            <input type="tel" id="v-phone" placeholder="+966..." oninput="generateVCard()">
-        </div>
-        <div class="field-group">
-            <span class="label">البريد الإلكتروني</span>
-            <input type="email" id="v-email" placeholder="mail@example.com" oninput="generateVCard()">
-        </div>
-        <div class="field-group">
-            <span class="label">الموقع الإلكتروني</span>
-            <input type="text" id="v-web" placeholder="www.website.com" oninput="generateVCard()">
-        </div>
-
-        <div class="field-group" style="margin-top:10px;">
-            <span class="label">الألوان</span>
-            <div style="display:flex; gap:10px;">
-                <input type="color" id="c1" value="#0f172a" oninput="generateVCard()" style="flex:1; height:35px;">
-                <input type="color" id="c2" value="#6366f1" oninput="generateVCard()" style="flex:1; height:35px;">
-            </div>
-        </div>
-
-        <div style="margin: 15px 0;">
-            <label style="cursor:pointer; font-weight: 700; font-size: 13px;">
-                <input type="checkbox" id="is-trans" onchange="generateVCard()"> نمط البطاقة الشفافة
-            </label>
-        </div>
-
-        <button class="btn-main" onclick="exportPDF()">تصدير PDF للطباعة</button>
-        <button class="btn-pdf" onclick="exportPNG()">حفظ كصورة PNG</button>
-    </aside>
-
-    <main class="viewer">
-        <div id="vcard-frame">
-            <div id="qr-wrap"></div>
-            <div id="name-display" style="margin-top:20px; font-size: 28px; font-weight: 900;">الاسم هنا</div>
-            <div id="title-display" style="font-size: 16px; color: #64748b;">المسمى الوظيفي</div>
-        </div>
-    </main>
-
-<script>
-    const qr = new QRCodeStyling({
-        width: 320, height: 320,
-        dotsOptions: { type: "extra-rounded" },
-        backgroundOptions: { color: "#ffffff" },
-        imageOptions: { crossOrigin: "anonymous", margin: 10, imageSize: 0.4 }
-    });
-
-    qr.append(document.getElementById("qr-wrap"));
-
-    function generateVCard() {
-        const name = document.getElementById('v-name').value || "اسم المستخدم";
-        const title = document.getElementById('v-title').value || "المسمى الوظيفي";
-        const phone = document.getElementById('v-phone').value || "";
-        const email = document.getElementById('v-email').value || "";
-        const web = document.getElementById('v-web').value || "";
-        const c1 = document.getElementById('c1').value;
-        const c2 = document.getElementById('c2').value;
-        const isTrans = document.getElementById('is-trans').checked;
-
-        // صياغة بروتوكول VCard العالمي
-        const vCardData = `BEGIN:VCARD
+    // الحل السحري: إضافة CHARSET=UTF-8 لكل حقل يحتوي على نص عربي
+    const vCardData = `BEGIN:VCARD
 VERSION:3.0
-FN:${name}
-TITLE:${title}
+FN;CHARSET=UTF-8:${name}
+TITLE;CHARSET=UTF-8:${title}
 TEL;TYPE=CELL:${phone}
 EMAIL:${email}
 URL:${web}
 END:VCARD`;
 
-        document.getElementById('name-display').innerText = name;
-        document.getElementById('title-display').innerText = title;
-        document.getElementById('vcard-frame').className = isTrans ? 'designer-mode' : '';
-        document.getElementById('name-display').style.color = isTrans ? c1 : "#0f172a";
+    // تحديث الواجهة المرئية
+    document.getElementById('name-display').innerText = name;
+    document.getElementById('title-display').innerText = title;
+    
+    document.getElementById('vcard-frame').className = isTrans ? 'designer-mode' : '';
+    document.getElementById('name-display').style.color = isTrans ? c1 : "#0f172a";
 
-        qr.update({
-            data: vCardData,
-            dotsOptions: { gradient: { type: "linear", colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] } },
-            backgroundOptions: { color: isTrans ? "transparent" : "#ffffff" },
-            cornersSquareOptions: { color: c1 }
-        });
-    }
-
-    async function exportPDF() {
-        const frame = document.getElementById('vcard-frame');
-        const canvas = await html2canvas(frame, { scale: 4, backgroundColor: null });
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jspdf.jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width/2, canvas.height/2] });
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width/2, canvas.height/2);
-        pdf.save("Qrestige_VCard.pdf");
-    }
-
-    async function exportPNG() {
-        const frame = document.getElementById('vcard-frame');
-        const canvas = await html2canvas(frame, { scale: 3, backgroundColor: null });
-        const link = document.createElement('a');
-        link.download = 'VCard_Smart.png';
-        link.href = canvas.toDataURL();
-        link.click();
-    }
-
-    generateVCard();
-</script>
-</body>
-</html>
+    // تحديث كود الـ QR بالبيانات الجديدة المرمزة صحيحة
+    qr.update({
+        data: vCardData,
+        dotsOptions: { 
+            gradient: { 
+                type: "linear", 
+                colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] 
+            } 
+        },
+        backgroundOptions: { color: isTrans ? "transparent" : "#ffffff" },
+        cornersSquareOptions: { color: c1 }
+    });
+}
