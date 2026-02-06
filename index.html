@@ -2,121 +2,100 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Qrestige Connect | بطاقتك الذكية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Qrestige | vCard Arabic Fix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <style>
         :root { --brand: #0f172a; --accent: #6366f1; }
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
-        body { background: #f8fafc; margin: 0; display: flex; height: 100vh; }
-        
-        .sidebar { width: 380px; background: white; border-left: 1px solid #e2e8f0; padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
-        .logo { font-weight: 900; font-size: 30px; text-align: center; color: var(--brand); margin-bottom: 25px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
-        
-        .input-group { margin-bottom: 15px; }
-        .label { font-size: 12px; font-weight: 800; color: #64748b; margin-bottom: 5px; display: block; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #f1f5f9; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-
-        .main-preview { flex: 1; display: flex; align-items: center; justify-content: center; gap: 50px; background: #f1f5f9; }
-        
-        /* محاكاة الهاتف */
-        .phone {
-            width: 300px; height: 580px; background: white; border: 10px solid #1e293b; border-radius: 40px;
-            position: relative; overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.1); display: flex; flex-direction: column;
-        }
-        .phone-header { height: 120px; background: var(--brand); width: 100%; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px; }
-        .avatar { width: 70px; height: 70px; background: #ddd; border-radius: 50%; border: 4px solid white; }
-        .phone-content { padding: 20px; text-align: center; }
-        .phone-name { font-weight: 900; font-size: 20px; margin-top: 10px; }
-        .phone-job { font-size: 14px; color: #64748b; margin-bottom: 20px; }
-        .contact-btn { width: 100%; padding: 12px; background: #f1f5f9; border-radius: 12px; margin-bottom: 10px; font-weight: 700; color: var(--brand); text-decoration: none; display: block; font-size: 13px; }
-
-        #qr-result { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .btn-download { background: var(--brand); color: white; border: none; padding: 18px; border-radius: 14px; font-weight: 900; cursor: pointer; margin-top: auto; }
+        body { background: #f1f5f9; margin: 0; display: flex; height: 100vh; }
+        .sidebar { width: 350px; background: white; border-left: 1px solid #e2e8f0; padding: 25px; overflow-y: auto; }
+        .logo { font-weight: 900; font-size: 24px; color: var(--brand); margin-bottom: 20px; text-align: center; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #f1f5f9; margin-bottom: 10px; outline: none; }
+        .btn { background: var(--brand); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; }
+        .viewer { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; }
+        #qr-display { background: white; padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="logo">Qrestige</div>
+        <div class="logo">Qrestige vCard Pro</div>
+        <input type="text" id="v-name" placeholder="الاسم الكامل (بالعربي)" oninput="updateQR()">
+        <input type="text" id="v-org" placeholder="الشركة / المنظمة" oninput="updateQR()">
+        <input type="tel" id="v-tel" placeholder="رقم الهاتف" oninput="updateQR()">
+        <input type="text" id="v-email" placeholder="البريد الإلكتروني" oninput="updateQR()">
         
-        <div class="input-group">
-            <span class="label">الاسم الكامل</span>
-            <input type="text" id="name" placeholder="مثلاً: فيصل القحطاني" oninput="update()">
-        </div>
-        <div class="input-group">
-            <span class="label">المسمى الوظيفي</span>
-            <input type="text" id="job" placeholder="خبير تسويق رقمي" oninput="update()">
-        </div>
-        <div class="input-group">
-            <span class="label">رابط واتساب مباشر</span>
-            <input type="text" id="wa" placeholder="wa.me/9665..." oninput="update()">
-        </div>
-        <div class="input-group">
-            <span class="label">رابط صفحتك الشخصية</span>
-            <input type="text" id="url" placeholder="https://yourpage.com" oninput="update()">
+        <div style="margin-top:10px;">
+            <label style="font-size: 12px; font-weight: bold;">تدرج الألوان</label>
+            <div style="display:flex; gap:5px; margin-top:5px;">
+                <input type="color" id="c1" value="#0f172a" oninput="updateQR()">
+                <input type="color" id="c2" value="#6366f1" oninput="updateQR()">
+            </div>
         </div>
 
-        <div class="input-group">
-            <span class="label">لون الهوية</span>
-            <input type="color" id="color" value="#0f172a" oninput="update()" style="height: 50px; cursor: pointer;">
-        </div>
-
-        <button class="btn-download" onclick="downloadQR()">تحميل كود QR الذكي</button>
+        <button class="btn" onclick="downloadQR()">تحميل الكود للطباعة</button>
     </aside>
 
-    <main class="main-preview">
-        <div class="phone">
-            <div class="phone-header" id="p-header">
-                <div class="avatar"></div>
-            </div>
-            <div class="phone-content">
-                <div class="phone-name" id="p-name">الاسم الكريم</div>
-                <div class="phone-job" id="p-job">المسمى الوظيفي</div>
-                <div class="contact-btn">واتساب</div>
-                <div class="contact-btn">لينكد إن</div>
-                <div class="contact-btn" id="p-url" style="background: var(--accent); color: white;">الموقع الإلكتروني</div>
-            </div>
-        </div>
-
-        <div id="qr-result">
+    <main class="viewer">
+        <div id="qr-display">
             <div id="canvas-target"></div>
-            <p style="text-align: center; font-weight: 900; margin-top: 15px; color: #1e293b;">كود الدخول السريع</p>
         </div>
+        <p style="margin-top: 20px; font-weight: bold; color: #64748b;">امسح الكود لتجربة حفظ جهة الاتصال</p>
     </main>
 
 <script>
+    // وظيفة تحويل النص العربي إلى ترميز Quoted-Printable ليفهمه الهاتف
+    function encodeQP(str) {
+        if (!str) return "";
+        let utf8 = unescape(encodeURIComponent(str));
+        let result = "";
+        for (let i = 0; i < utf8.length; i++) {
+            result += "=" + utf8.charCodeAt(i).toString(16).toUpperCase();
+        }
+        return result;
+    }
+
     const qr = new QRCodeStyling({
-        width: 280, height: 280,
+        width: 320, height: 320,
         dotsOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" },
     });
 
     qr.append(document.getElementById("canvas-target"));
 
-    function update() {
-        const name = document.getElementById('name').value || "الاسم الكريم";
-        const job = document.getElementById('job').value || "المسمى الوظيفي";
-        const color = document.getElementById('color').value;
-        const url = document.getElementById('url').value || "https://qrestige.com";
+    function updateQR() {
+        const name = document.getElementById('v-name').value;
+        const org = document.getElementById('v-org').value;
+        const tel = document.getElementById('v-tel').value;
+        const email = document.getElementById('v-email').value;
+        const col1 = document.getElementById('c1').value;
+        const col2 = document.getElementById('c2').value;
 
-        document.getElementById('p-name').innerText = name;
-        document.getElementById('p-job').innerText = job;
-        document.getElementById('p-header').style.background = color;
-        
+        // بناء الـ vCard باستخدام الترميز المتوافق مع الهواتف
+        const vcard = [
+            "BEGIN:VCARD",
+            "VERSION:2.1",
+            `FN;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(name)}`,
+            `ORG;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(org)}`,
+            `TEL;CELL:${tel}`,
+            `EMAIL;INTERNET:${email}`,
+            "END:VCARD"
+        ].join("\r\n");
+
         qr.update({
-            data: url,
-            dotsOptions: { color: color },
-            cornersSquareOptions: { color: color }
+            data: vcard,
+            dotsOptions: { gradient: { type: "linear", colorStops: [{ offset: 0, color: col1 }, { offset: 1, color: col2 }] } },
+            cornersSquareOptions: { color: col1 }
         });
     }
 
     function downloadQR() {
-        qr.download({ name: "Qrestige_Smart_QR", extension: "png" });
+        qr.download({ name: "Arabic_vCard_Qrestige", extension: "png" });
     }
 
-    update();
+    // تشغيل مبدئي
+    updateQR();
 </script>
 </body>
 </html>
