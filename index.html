@@ -1,42 +1,110 @@
-// استبدل وظيفة generateVCard في الكود السابق بهذا التحديث الجوهري:
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Qrestige V-Card | إصدار اللغة العربية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root { --brand: #0f172a; --accent: #6366f1; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
+        body { background: #f1f5f9; margin: 0; display: flex; height: 100vh; }
+        .sidebar { width: 380px; background: white; border-left: 1px solid #e2e8f0; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; }
+        .logo { font-weight: 900; font-size: 28px; text-align: center; color: var(--brand); margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #f1f5f9; margin-bottom: 10px; outline: none; }
+        input:focus { border-color: var(--accent); }
+        .label { font-size: 11px; font-weight: 800; color: #94a3b8; margin-bottom: 5px; display: block; }
+        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; background: #f8fafc; }
+        #vcard-frame { background: white; padding: 50px; border-radius: 40px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
+        #vcard-frame.trans { background: transparent; box-shadow: none; border: 2px dashed #ccc; }
+        .btn-save { background: var(--brand); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
 
-function generateVCard() {
-    const name = document.getElementById('v-name').value || "اسم المستخدم";
-    const title = document.getElementById('v-title').value || "المسمى الوظيفي";
-    const phone = document.getElementById('v-phone').value || "";
-    const email = document.getElementById('v-email').value || "";
-    const web = document.getElementById('v-web').value || "";
-    const c1 = document.getElementById('c1').value;
-    const c2 = document.getElementById('c2').value;
-    const isTrans = document.getElementById('is-trans').checked;
+    <aside class="sidebar">
+        <div class="logo">Qrestige</div>
+        
+        <span class="label">الاسم الكامل</span>
+        <input type="text" id="v-name" placeholder="مثال: محمد أحمد" value="محمد أحمد">
+        
+        <span class="label">المسمى الوظيفي</span>
+        <input type="text" id="v-title" placeholder="مصمم جرافيك" value="مصمم جرافيك">
+        
+        <span class="label">رقم الهاتف</span>
+        <input type="tel" id="v-phone" placeholder="+966500000000" value="+966500000000">
 
-    // الحل السحري: إضافة CHARSET=UTF-8 لكل حقل يحتوي على نص عربي
-    const vCardData = `BEGIN:VCARD
-VERSION:3.0
-FN;CHARSET=UTF-8:${name}
-TITLE;CHARSET=UTF-8:${title}
-TEL;TYPE=CELL:${phone}
-EMAIL:${email}
-URL:${web}
-END:VCARD`;
+        <span class="label">الألوان</span>
+        <div style="display:flex; gap:10px;">
+            <input type="color" id="c1" value="#0f172a" style="height:45px;">
+            <input type="color" id="c2" value="#6366f1" style="height:45px;">
+        </div>
 
-    // تحديث الواجهة المرئية
-    document.getElementById('name-display').innerText = name;
-    document.getElementById('title-display').innerText = title;
-    
-    document.getElementById('vcard-frame').className = isTrans ? 'designer-mode' : '';
-    document.getElementById('name-display').style.color = isTrans ? c1 : "#0f172a";
+        <label style="margin: 10px 0; cursor:pointer;"><input type="checkbox" id="is-trans"> نمط شفاف</label>
 
-    // تحديث كود الـ QR بالبيانات الجديدة المرمزة صحيحة
-    qr.update({
-        data: vCardData,
-        dotsOptions: { 
-            gradient: { 
-                type: "linear", 
-                colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] 
-            } 
-        },
-        backgroundOptions: { color: isTrans ? "transparent" : "#ffffff" },
-        cornersSquareOptions: { color: c1 }
+        <button class="btn-save" onclick="updateQR()">تحديث الكود</button>
+        <button class="btn-save" style="background:#fff; color:var(--brand); border:2px solid var(--brand);" onclick="exportPDF()">حفظ PDF للطباعة</button>
+    </aside>
+
+    <main class="viewer">
+        <div id="vcard-frame">
+            <div id="qr-wrap"></div>
+            <div id="name-preview" style="margin-top:20px; font-size: 26px; font-weight: 900;">محمد أحمد</div>
+        </div>
+    </main>
+
+<script>
+    const qr = new QRCodeStyling({
+        width: 320, height: 320,
+        dotsOptions: { type: "extra-rounded" },
+        backgroundOptions: { color: "#ffffff" },
+        imageOptions: { crossOrigin: "anonymous", margin: 10, imageSize: 0.4 }
     });
-}
+
+    qr.append(document.getElementById("qr-wrap"));
+
+    function updateQR() {
+        const name = document.getElementById('v-name').value;
+        const title = document.getElementById('v-title').value;
+        const phone = document.getElementById('v-phone').value;
+        const c1 = document.getElementById('c1').value;
+        const c2 = document.getElementById('c2').value;
+        const isTrans = document.getElementById('is-trans').checked;
+
+        // الحل النهائي لدعم العربي: بناء الـ vCard مع ترميز يدوي
+        const vcard = [
+            "BEGIN:VCARD",
+            "VERSION:3.0",
+            `FN;CHARSET=UTF-8:${name}`,
+            `TITLE;CHARSET=UTF-8:${title}`,
+            `TEL;TYPE=CELL:${phone}`,
+            "END:VCARD"
+        ].join("\n");
+
+        document.getElementById('name-preview').innerText = name;
+        document.getElementById('vcard-frame').className = isTrans ? 'trans' : '';
+
+        qr.update({
+            data: vcard,
+            dotsOptions: { gradient: { type: "linear", colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] } },
+            backgroundOptions: { color: isTrans ? "transparent" : "#ffffff" },
+            cornersSquareOptions: { color: c1 }
+        });
+    }
+
+    async function exportPDF() {
+        const frame = document.getElementById('vcard-frame');
+        const canvas = await html2canvas(frame, { scale: 4, backgroundColor: null });
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width/2, canvas.height/2] });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width/2, canvas.height/2);
+        pdf.save("Smart_Card.pdf");
+    }
+
+    // تشغيل التحديث الأول عند الفتح
+    updateQR();
+</script>
+</body>
+</html>
