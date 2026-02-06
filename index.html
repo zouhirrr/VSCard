@@ -2,91 +2,118 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Qrestige | Smart Business Link</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+    <title>Qrestige Connect | بطاقتك الذكية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --brand: #0f172a; --accent: #6366f1; }
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
-        body { background: #f1f5f9; margin: 0; display: flex; height: 100vh; }
-        .sidebar { width: 380px; background: white; border-left: 1px solid #e2e8f0; padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
-        .logo { font-weight: 900; font-size: 28px; text-align: center; color: var(--brand); margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #f1f5f9; margin-bottom: 10px; outline: none; text-align: right; }
-        .label { font-size: 11px; font-weight: 800; color: #94a3b8; margin-bottom: 5px; display: block; }
-        .preview { flex: 1; display: flex; align-items: center; justify-content: center; background: #f8fafc; flex-direction: column; }
-        #qr-frame { background: white; padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .btn { background: var(--brand); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; }
+        body { background: #f8fafc; margin: 0; display: flex; height: 100vh; }
         
-        /* محاكاة صفحة الهبوط */
-        .phone-mockup {
-            width: 250px; height: 450px; border: 8px solid #333; border-radius: 30px; 
-            background: white; margin-top: 20px; overflow: hidden; display: flex; flex-direction: column; align-items: center; padding: 20px;
+        .sidebar { width: 380px; background: white; border-left: 1px solid #e2e8f0; padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
+        .logo { font-weight: 900; font-size: 30px; text-align: center; color: var(--brand); margin-bottom: 25px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+        
+        .input-group { margin-bottom: 15px; }
+        .label { font-size: 12px; font-weight: 800; color: #64748b; margin-bottom: 5px; display: block; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #f1f5f9; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+
+        .main-preview { flex: 1; display: flex; align-items: center; justify-content: center; gap: 50px; background: #f1f5f9; }
+        
+        /* محاكاة الهاتف */
+        .phone {
+            width: 300px; height: 580px; background: white; border: 10px solid #1e293b; border-radius: 40px;
+            position: relative; overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.1); display: flex; flex-direction: column;
         }
-        .mock-btn { width: 100%; padding: 8px; margin: 5px; background: #f1f5f9; border-radius: 5px; font-size: 10px; text-align: center; font-weight: bold; }
+        .phone-header { height: 120px; background: var(--brand); width: 100%; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px; }
+        .avatar { width: 70px; height: 70px; background: #ddd; border-radius: 50%; border: 4px solid white; }
+        .phone-content { padding: 20px; text-align: center; }
+        .phone-name { font-weight: 900; font-size: 20px; margin-top: 10px; }
+        .phone-job { font-size: 14px; color: #64748b; margin-bottom: 20px; }
+        .contact-btn { width: 100%; padding: 12px; background: #f1f5f9; border-radius: 12px; margin-bottom: 10px; font-weight: 700; color: var(--brand); text-decoration: none; display: block; font-size: 13px; }
+
+        #qr-result { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .btn-download { background: var(--brand); color: white; border: none; padding: 18px; border-radius: 14px; font-weight: 900; cursor: pointer; margin-top: auto; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="logo">Qrestige Pro</div>
+        <div class="logo">Qrestige</div>
         
-        <span class="label">رابط صفحتك (أو حسابك)</span>
-        <input type="text" id="link" placeholder="https://social-card.com/yourname" oninput="update()">
-        
-        <span class="label">الاسم (للمعاينة فقط)</span>
-        <input type="text" id="name" placeholder="محمد علي" oninput="update()">
-
-        <span class="label">ألوان الهوية</span>
-        <div style="display:flex; gap:10px;">
-            <input type="color" id="c1" value="#0f172a" oninput="update()">
-            <input type="color" id="c2" value="#6366f1" oninput="update()">
+        <div class="input-group">
+            <span class="label">الاسم الكامل</span>
+            <input type="text" id="name" placeholder="مثلاً: فيصل القحطاني" oninput="update()">
+        </div>
+        <div class="input-group">
+            <span class="label">المسمى الوظيفي</span>
+            <input type="text" id="job" placeholder="خبير تسويق رقمي" oninput="update()">
+        </div>
+        <div class="input-group">
+            <span class="label">رابط واتساب مباشر</span>
+            <input type="text" id="wa" placeholder="wa.me/9665..." oninput="update()">
+        </div>
+        <div class="input-group">
+            <span class="label">رابط صفحتك الشخصية</span>
+            <input type="text" id="url" placeholder="https://yourpage.com" oninput="update()">
         </div>
 
-        <button class="btn" onclick="saveImage()">تحميل الكود PNG</button>
-        <p style="font-size: 11px; color: #64748b; margin-top: 20px;">* ملاحظة: هذا الكود سيفتح رابطك الشخصي الذي يدعم اللغة العربية 100%.</p>
+        <div class="input-group">
+            <span class="label">لون الهوية</span>
+            <input type="color" id="color" value="#0f172a" oninput="update()" style="height: 50px; cursor: pointer;">
+        </div>
+
+        <button class="btn-download" onclick="downloadQR()">تحميل كود QR الذكي</button>
     </aside>
 
-    <main class="preview">
-        <div id="qr-frame">
-            <div id="qr-target"></div>
+    <main class="main-preview">
+        <div class="phone">
+            <div class="phone-header" id="p-header">
+                <div class="avatar"></div>
+            </div>
+            <div class="phone-content">
+                <div class="phone-name" id="p-name">الاسم الكريم</div>
+                <div class="phone-job" id="p-job">المسمى الوظيفي</div>
+                <div class="contact-btn">واتساب</div>
+                <div class="contact-btn">لينكد إن</div>
+                <div class="contact-btn" id="p-url" style="background: var(--accent); color: white;">الموقع الإلكتروني</div>
+            </div>
         </div>
-        
-        <div class="phone-mockup">
-            <div style="width: 50px; height: 50px; background: #eee; border-radius: 50%; margin-bottom: 10px;"></div>
-            <div id="mock-name" style="font-weight: 900; font-size: 14px;">محمد علي</div>
-            <div class="mock-btn" style="background: #25D366; color: white;">واتساب</div>
-            <div class="mock-btn" style="background: #E1306C; color: white;">إنستغرام</div>
-            <div class="mock-btn" style="background: #0077B5; color: white;">لينكد إن</div>
+
+        <div id="qr-result">
+            <div id="canvas-target"></div>
+            <p style="text-align: center; font-weight: 900; margin-top: 15px; color: #1e293b;">كود الدخول السريع</p>
         </div>
     </main>
 
 <script>
     const qr = new QRCodeStyling({
-        width: 300, height: 300,
+        width: 280, height: 280,
         dotsOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" },
     });
 
-    qr.append(document.getElementById("qr-target"));
+    qr.append(document.getElementById("canvas-target"));
 
     function update() {
-        const url = document.getElementById('link').value || "https://google.com";
-        const name = document.getElementById('name').value || "محمد علي";
-        const col1 = document.getElementById('c1').value;
-        const col2 = document.getElementById('c2').value;
+        const name = document.getElementById('name').value || "الاسم الكريم";
+        const job = document.getElementById('job').value || "المسمى الوظيفي";
+        const color = document.getElementById('color').value;
+        const url = document.getElementById('url').value || "https://qrestige.com";
 
-        document.getElementById('mock-name').innerText = name;
-
+        document.getElementById('p-name').innerText = name;
+        document.getElementById('p-job').innerText = job;
+        document.getElementById('p-header').style.background = color;
+        
         qr.update({
             data: url,
-            dotsOptions: { gradient: { type: "linear", colorStops: [{ offset: 0, color: col1 }, { offset: 1, color: col2 }] } },
-            cornersSquareOptions: { color: col1 }
+            dotsOptions: { color: color },
+            cornersSquareOptions: { color: color }
         });
     }
 
-    function saveImage() {
-        qr.download({ name: "Qrestige_Smart_Link", extension: "png" });
+    function downloadQR() {
+        qr.download({ name: "Qrestige_Smart_QR", extension: "png" });
     }
 
     update();
