@@ -2,50 +2,127 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Qrestige | vCard Arabic Fix</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qrestige | Ultimate vCard Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <style>
-        :root { --brand: #0f172a; --accent: #6366f1; }
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
-        body { background: #f1f5f9; margin: 0; display: flex; height: 100vh; }
-        .sidebar { width: 350px; background: white; border-left: 1px solid #e2e8f0; padding: 25px; overflow-y: auto; }
-        .logo { font-weight: 900; font-size: 24px; color: var(--brand); margin-bottom: 20px; text-align: center; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #f1f5f9; margin-bottom: 10px; outline: none; }
-        .btn { background: var(--brand); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; }
-        .viewer { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; }
-        #qr-display { background: white; padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #6366f1;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --input-bg: #334155;
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-family: 'Tajawal', sans-serif !important; }
+        
+        body { 
+            background: var(--bg); color: var(--text-main); margin: 0; 
+            display: flex; height: 100vh; overflow: hidden;
+        }
+
+        /* Sidebar UI */
+        .sidebar {
+            width: 400px; background: var(--card-bg); border-left: 1px solid #334155;
+            padding: 40px 30px; display: flex; flex-direction: column; overflow-y: auto;
+            box-shadow: 20px 0 50px rgba(0,0,0,0.3);
+        }
+
+        .header { margin-bottom: 40px; text-align: center; }
+        .header h1 { font-weight: 900; font-size: 32px; margin: 0; letter-spacing: -1px; }
+        .header p { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; margin-top: 5px; }
+
+        .section-title { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; margin: 25px 0 15px; letter-spacing: 1px; }
+
+        .input-box { margin-bottom: 15px; position: relative; }
+        input[type="text"], input[type="tel"], input[type="email"] {
+            width: 100%; background: var(--input-bg); border: 2px solid transparent;
+            padding: 14px 18px; border-radius: 14px; color: white; font-size: 15px; outline: none;
+        }
+        input:focus { border-color: var(--accent); background: #1e293b; box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+
+        .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .color-item { background: var(--input-bg); padding: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; }
+        input[type="color"] { background: none; border: none; width: 40px; height: 35px; cursor: pointer; }
+
+        /* Viewer UI */
+        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); }
+        
+        .qr-preview-card {
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
+            padding: 60px; border-radius: 60px; border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            transform: perspective(1000px) rotateX(5deg);
+        }
+        .qr-preview-card:hover { transform: perspective(1000px) rotateX(0deg) scale(1.02); }
+
+        #canvas-target { background: white; padding: 25px; border-radius: 40px; box-shadow: 0 0 40px rgba(99, 102, 241, 0.3); }
+
+        /* Action Buttons */
+        .actions { margin-top: auto; padding-top: 30px; }
+        .btn-primary {
+            width: 100%; background: var(--accent); color: white; border: none;
+            padding: 18px; border-radius: 16px; font-weight: 900; font-size: 18px;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+        .btn-primary:hover { background: #4f46e5; transform: translateY(-3px); }
+        .btn-secondary {
+            width: 100%; background: transparent; color: white; border: 2px solid #334155;
+            padding: 14px; border-radius: 16px; margin-top: 12px; font-weight: 700; cursor: pointer;
+        }
+        .btn-secondary:hover { background: #334155; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--input-bg); border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="logo">Qrestige vCard Pro</div>
-        <input type="text" id="v-name" placeholder="الاسم الكامل (بالعربي)" oninput="updateQR()">
-        <input type="text" id="v-org" placeholder="الشركة / المنظمة" oninput="updateQR()">
-        <input type="tel" id="v-tel" placeholder="رقم الهاتف" oninput="updateQR()">
-        <input type="text" id="v-email" placeholder="البريد الإلكتروني" oninput="updateQR()">
-        
-        <div style="margin-top:10px;">
-            <label style="font-size: 12px; font-weight: bold;">تدرج الألوان</label>
-            <div style="display:flex; gap:5px; margin-top:5px;">
-                <input type="color" id="c1" value="#0f172a" oninput="updateQR()">
-                <input type="color" id="c2" value="#6366f1" oninput="updateQR()">
+        <div class="header">
+            <h1>Qrestige</h1>
+            <p>Smart Arabic vCard Studio</p>
+        </div>
+
+        <div class="section-title">بيانات جهة الاتصال</div>
+        <div class="input-box"><input type="text" id="v-name" placeholder="الاسم الكامل" oninput="updateQR()"></div>
+        <div class="input-box"><input type="text" id="v-org" placeholder="المنصب أو الشركة" oninput="updateQR()"></div>
+        <div class="input-box"><input type="tel" id="v-tel" placeholder="رقم الجوال" oninput="updateQR()"></div>
+        <div class="input-box"><input type="email" id="v-email" placeholder="البريد الإلكتروني" oninput="updateQR()"></div>
+
+        <div class="section-title">هوية الكود</div>
+        <div class="color-grid">
+            <div class="color-item">
+                <span style="font-size: 11px; font-weight: 700;">اللون 1</span>
+                <input type="color" id="c1" value="#6366f1" oninput="updateQR()">
+            </div>
+            <div class="color-item">
+                <span style="font-size: 11px; font-weight: 700;">اللون 2</span>
+                <input type="color" id="c2" value="#a855f7" oninput="updateQR()">
             </div>
         </div>
 
-        <button class="btn" onclick="downloadQR()">تحميل الكود للطباعة</button>
+        <div class="actions">
+            <button class="btn-primary" onclick="downloadQR()">تحميل الكود للطباعة</button>
+            <button class="btn-secondary" onclick="location.reload()">تفريغ البيانات</button>
+        </div>
     </aside>
 
     <main class="viewer">
-        <div id="qr-display">
+        <div class="qr-preview-card">
             <div id="canvas-target"></div>
+            <div style="margin-top: 30px; text-align: center;">
+                <div id="name-label" style="font-size: 24px; font-weight: 900;">الاسم الكريم</div>
+                <div id="org-label" style="color: var(--text-dim); font-size: 14px; margin-top: 5px;">المسمى الوظيفي</div>
+            </div>
         </div>
-        <p style="margin-top: 20px; font-weight: bold; color: #64748b;">امسح الكود لتجربة حفظ جهة الاتصال</p>
     </main>
 
 <script>
-    // وظيفة تحويل النص العربي إلى ترميز Quoted-Printable ليفهمه الهاتف
     function encodeQP(str) {
         if (!str) return "";
         let utf8 = unescape(encodeURIComponent(str));
@@ -57,9 +134,10 @@
     }
 
     const qr = new QRCodeStyling({
-        width: 320, height: 320,
+        width: 300, height: 300,
         dotsOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" },
+        imageOptions: { margin: 10, imageSize: 0.4 }
     });
 
     qr.append(document.getElementById("canvas-target"));
@@ -72,7 +150,9 @@
         const col1 = document.getElementById('c1').value;
         const col2 = document.getElementById('c2').value;
 
-        // بناء الـ vCard باستخدام الترميز المتوافق مع الهواتف
+        document.getElementById('name-label').innerText = name || "الاسم الكريم";
+        document.getElementById('org-label').innerText = org || "المسمى الوظيفي";
+
         const vcard = [
             "BEGIN:VCARD",
             "VERSION:2.1",
@@ -91,10 +171,9 @@
     }
 
     function downloadQR() {
-        qr.download({ name: "Arabic_vCard_Qrestige", extension: "png" });
+        qr.download({ name: "Qrestige_vCard_Pro", extension: "png" });
     }
 
-    // تشغيل مبدئي
     updateQR();
 </script>
 </body>
