@@ -2,193 +2,134 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Qrestige Elite | الاستوديو المتكامل</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qrestige vCard | منصة البطاقات الرقمية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
     <style>
-        :root { --bg: #0b0f1a; --card: #161b2a; --accent: #4f46e5; --text: #e2e8f0; }
+        :root { --accent: #6366f1; --bg: #f8fafc; --sidebar: #ffffff; }
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
-        body { background: var(--bg); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        body { background: var(--bg); margin: 0; display: flex; height: 100vh; }
 
-        .sidebar { width: 420px; background: var(--card); border-left: 1px solid #2d3748; padding: 25px; overflow-y: auto; }
-        .logo-area { text-align: center; margin-bottom: 30px; }
-        .logo-area h1 { font-weight: 900; font-size: 28px; margin: 0; color: white; }
+        /* Sidebar - Builder */
+        .sidebar { width: 400px; background: var(--sidebar); border-left: 1px solid #e2e8f0; padding: 25px; overflow-y: auto; }
+        .logo { font-weight: 900; font-size: 26px; color: #1e293b; margin-bottom: 30px; display: block; text-align: center; }
         
-        .group { margin-bottom: 15px; }
-        .label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; margin-bottom: 6px; display: block; }
-        input[type="text"], input[type="tel"], input[type="email"] {
-            width: 100%; background: #1a202c; border: 1px solid #2d3748; padding: 12px; border-radius: 10px; color: white; outline: none;
-        }
+        .section-title { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 20px 0 10px; }
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 10px; outline: none; }
         input:focus { border-color: var(--accent); }
 
-        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #1a202c 0%, #0b0f1a 100%); }
-        .preview-box {
-            background: rgba(255,255,255,0.02); padding: 50px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.05);
-            display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-        }
-        .preview-box.trans { background: transparent; border: 2px dashed #2d3748; box-shadow: none; }
-
-        .user-photo { width: 80px; height: 80px; border-radius: 50%; background: #2d3748; margin-bottom: 15px; object-fit: cover; border: 3px solid var(--accent); }
+        /* Viewer - Mobile Mockup */
+        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; gap: 40px; background: #edf2f7; }
         
-        .btn-group { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
-        .btn-p { background: var(--accent); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; }
-        .btn-s { background: transparent; border: 1px solid #4a5568; color: white; padding: 10px; border-radius: 12px; cursor: pointer; }
+        .phone-mockup {
+            width: 320px; height: 600px; background: white; border: 12px solid #1e293b; border-radius: 45px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1); overflow-y: auto; position: relative;
+        }
+        .phone-header { height: 140px; background: var(--accent); position: relative; }
+        .phone-avatar { 
+            width: 90px; height: 90px; background: #cbd5e1; border-radius: 50%; 
+            position: absolute; bottom: -45px; right: 50%; transform: translateX(50%);
+            border: 4px solid white; object-fit: cover;
+        }
+        .phone-body { padding: 60px 20px 20px; text-align: center; }
+        .name-txt { font-weight: 900; font-size: 22px; margin-bottom: 5px; }
+        .title-txt { color: #64748b; font-size: 14px; margin-bottom: 25px; }
+        .action-link { 
+            display: flex; align-items: center; justify-content: center; 
+            padding: 12px; background: #f1f5f9; border-radius: 12px; 
+            margin-bottom: 10px; text-decoration: none; color: #1e293b; font-weight: 700;
+        }
+
+        /* QR Card */
+        .qr-card { background: white; padding: 30px; border-radius: 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .btn-save { background: #1e293b; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <aside class="sidebar">
-    <div class="logo-area"><h1>Qrestige Elite</h1></div>
-    
-    <div class="group">
-        <span class="label">الصورة الشخصية</span>
-        <input type="file" id="photo-in" accept="image/*" onchange="handleImage(this)">
+    <span class="logo">Qrestige vCard</span>
+
+    <div class="section-title">بيانات البطاقة الرقمية</div>
+    <input type="text" id="v-name" placeholder="الاسم الكامل" oninput="sync()">
+    <input type="text" id="v-title" placeholder="المسمى الوظيفي" oninput="sync()">
+    <input type="tel" id="v-phone" placeholder="رقم الواتساب" oninput="sync()">
+    <input type="text" id="v-email" placeholder="البريد الإلكتروني" oninput="sync()">
+
+    <div class="section-title">تخصيص التصميم</div>
+    <div style="display:flex; gap:10px;">
+        <input type="color" id="c1" value="#6366f1" oninput="sync()" style="height:50px;">
+        <input type="color" id="c2" value="#4f46e5" oninput="sync()" style="height:50px;">
     </div>
 
-    <div class="group">
-        <span class="label">البيانات الأساسية</span>
-        <input type="text" id="v-name" placeholder="الاسم الكامل" oninput="update()">
-        <input type="text" id="v-title" placeholder="المسمى الوظيفي" oninput="update()" style="margin-top:5px">
-    </div>
+    <div class="section-title">شكل الكود (Monkey Style)</div>
+    <select id="dot-style" onchange="sync()">
+        <option value="extra-rounded">نقاط دائرية</option>
+        <option value="square">مربعات كلاسيكية</option>
+        <option value="dots">نقاط صغيرة</option>
+    </select>
 
-    <div class="group">
-        <span class="label">الاتصال</span>
-        <input type="tel" id="v-phone" placeholder="رقم الجوال" oninput="update()">
-        <input type="email" id="v-email" placeholder="البريد الإلكتروني" oninput="update()" style="margin-top:5px">
-    </div>
-
-    <div class="group">
-        <span class="label">العنوان والموقع</span>
-        <input type="text" id="v-adr" placeholder="العنوان (مثال: الرياض، السعودية)" oninput="update()">
-        <input type="text" id="v-url" placeholder="رابط الموقع أو LinkedIn" oninput="update()" style="margin-top:5px">
-    </div>
-
-    <div class="group">
-        <span class="label">التصميم</span>
-        <div style="display:flex; gap:10px;">
-            <input type="color" id="c1" value="#4f46e5" oninput="update()" style="flex:1; height:40px;">
-            <input type="color" id="c2" value="#9333ea" oninput="update()" style="flex:1; height:40px;">
-        </div>
-    </div>
-
-    <div class="group">
-        <label style="cursor:pointer; font-size: 13px; font-weight: bold;">
-            <input type="checkbox" id="mode" onchange="update()"> خلفية شفافة
-        </label>
-    </div>
-
-    <div class="btn-group">
-        <button class="btn-p" onclick="exportPDF()">حفظ كملف PDF للطباعة</button>
-        <button class="btn-s" onclick="exportPNG()">تصدير صورة PNG</button>
-    </div>
+    <button class="btn-save" onclick="downloadPNG()">تحميل الكود PNG</button>
 </aside>
 
 <main class="viewer">
-    <div id="capture-area" class="preview-box">
-        <img id="avatar-prev" class="user-photo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
-        <div id="qr-target"></div>
-        <div style="margin-top:20px">
-            <div id="p-name" style="font-size: 24px; font-weight: 900;">الاسم الكريم</div>
-            <div id="p-title" style="color: #718096; font-size: 14px;">المسمى الوظيفي</div>
+    <div class="phone-mockup">
+        <div class="phone-header" id="header-bg">
+            <img class="phone-avatar" id="avatar-img" src="https://via.placeholder.com/150">
         </div>
+        <div class="phone-body">
+            <div class="name-txt" id="name-prev">محمد علي</div>
+            <div class="title-txt" id="title-prev">مصمم واجهات</div>
+            
+            <a href="#" class="action-link" id="wa-btn">💬 واتساب مباشر</a>
+            <a href="#" class="action-link" id="mail-btn">📧 البريد الإلكتروني</a>
+            <a href="#" class="action-link" style="background: #1e293b; color: white;">📥 حفظ في جهات الاتصال</a>
+        </div>
+    </div>
+
+    <div class="qr-card">
+        <div id="qr-target"></div>
+        <p style="font-weight: 900; margin-top: 15px;">كود الوصول السريع</p>
     </div>
 </main>
 
 <script>
-    // خوارزمية الترميز العربي QP (السر الذي يجعلها تعمل)
-    function encodeQP(str) {
-        if (!str) return "";
-        let utf8 = unescape(encodeURIComponent(str));
-        let result = "";
-        for (let i = 0; i < utf8.length; i++) {
-            result += "=" + utf8.charCodeAt(i).toString(16).toUpperCase();
-        }
-        return result;
-    }
-
-    let userImageData = null;
-
     const qr = new QRCodeStyling({
-        width: 300, height: 300,
+        width: 250, height: 250,
         dotsOptions: { type: "extra-rounded" },
-        backgroundOptions: { color: "#ffffff" },
-        imageOptions: { margin: 8, imageSize: 0.4, crossOrigin: "anonymous" }
+        backgroundOptions: { color: "#ffffff" }
     });
 
     qr.append(document.getElementById("qr-target"));
 
-    function handleImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                userImageData = e.target.result;
-                document.getElementById('avatar-prev').src = userImageData;
-                update();
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    function update() {
+    function sync() {
         const name = document.getElementById('v-name').value || "الاسم الكريم";
         const title = document.getElementById('v-title').value || "المسمى الوظيفي";
-        const phone = document.getElementById('v-phone').value;
-        const email = document.getElementById('v-email').value;
-        const adr = document.getElementById('v-adr').value;
-        const url = document.getElementById('v-url').value;
         const c1 = document.getElementById('c1').value;
         const c2 = document.getElementById('c2').value;
-        const isTrans = document.getElementById('mode').checked;
+        const dotStyle = document.getElementById('dot-style').value;
 
-        document.getElementById('p-name').innerText = name;
-        document.getElementById('p-title').innerText = title;
-        document.getElementById('p-name').style.color = isTrans ? c1 : "white";
-        document.getElementById('capture-area').className = isTrans ? 'preview-box trans' : 'preview-box';
+        // تحديث محاكاة الهاتف
+        document.getElementById('name-prev').innerText = name;
+        document.getElementById('title-prev').innerText = title;
+        document.getElementById('header-bg').style.background = `linear-gradient(45deg, ${c1}, ${c2})`;
 
-        // بناء الـ vCard الاحترافي
-        const vcard = [
-            "BEGIN:VCARD",
-            "VERSION:2.1",
-            `FN;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(name)}`,
-            `TITLE;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(title)}`,
-            `ADR;HOME;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:;;${encodeQP(adr)}`,
-            `TEL;CELL:${phone}`,
-            `EMAIL;INTERNET:${email}`,
-            `URL:${url}`,
-            "END:VCARD"
-        ].join("\r\n");
+        // في المنصة الحقيقية: هذا الرابط سيكون رابط صفحة العميل المخزنة في قاعدة بياناتك
+        const demoLink = `https://qrestige.io/p/demo_user`;
 
         qr.update({
-            data: vcard,
-            dotsOptions: { gradient: { type: "linear", colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] } },
-            backgroundOptions: { color: isTrans ? "transparent" : "#ffffff" },
-            image: userImageData,
-            cornersSquareOptions: { color: c1 }
+            data: demoLink,
+            dotsOptions: { type: dotStyle, gradient: { type: "linear", colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] } },
+            cornersSquareOptions: { color: c1, type: 'extra-rounded' }
         });
     }
 
-    async function exportPDF() {
-        const area = document.getElementById('capture-area');
-        const canvas = await html2canvas(area, { scale: 4, backgroundColor: null });
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jspdf.jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width/2, canvas.height/2] });
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width/2, canvas.height/2);
-        pdf.save("Qrestige_Elite_vCard.pdf");
+    function downloadPNG() {
+        qr.download({ name: "Qrestige_vCard", extension: "png" });
     }
 
-    async function exportPNG() {
-        const area = document.getElementById('capture-area');
-        const canvas = await html2canvas(area, { scale: 3, backgroundColor: null });
-        const link = document.createElement('a');
-        link.download = 'Qrestige_Elite.png';
-        link.href = canvas.toDataURL();
-        link.click();
-    }
-
-    update();
+    sync();
 </script>
 </body>
 </html>
