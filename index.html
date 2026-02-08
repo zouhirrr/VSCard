@@ -2,134 +2,157 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qrestige vCard | منصة البطاقات الرقمية</title>
+    <title>Qrestige | vCard Professional Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <style>
-        :root { --accent: #6366f1; --bg: #f8fafc; --sidebar: #ffffff; }
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
-        body { background: var(--bg); margin: 0; display: flex; height: 100vh; }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-        /* Sidebar - Builder */
-        .sidebar { width: 400px; background: var(--sidebar); border-left: 1px solid #e2e8f0; padding: 25px; overflow-y: auto; }
-        .logo { font-weight: 900; font-size: 26px; color: #1e293b; margin-bottom: 30px; display: block; text-align: center; }
+    <style>
+        :root { --accent: #6366f1; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
+        body { background: var(--bg); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        /* الجانب الأيمن: المدخلات */
+        .sidebar { width: 400px; background: var(--card); border-left: 1px solid #334155; padding: 25px; overflow-y: auto; }
+        .sidebar h2 { font-weight: 900; color: var(--accent); margin-top: 0; }
         
-        .section-title { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 20px 0 10px; }
-        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 10px; outline: none; }
+        .field { margin-bottom: 15px; }
+        label { font-size: 12px; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #334155; background: #0f172a; color: white; outline: none; }
         input:focus { border-color: var(--accent); }
 
-        /* Viewer - Mobile Mockup */
-        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; gap: 40px; background: #edf2f7; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
         
-        .phone-mockup {
-            width: 320px; height: 600px; background: white; border: 12px solid #1e293b; border-radius: 45px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.1); overflow-y: auto; position: relative;
+        /* الجانب الأيسر: المعاينة */
+        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); }
+        .preview-container { 
+            background: white; padding: 40px; border-radius: 40px; text-align: center;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4); transition: 0.3s;
         }
-        .phone-header { height: 140px; background: var(--accent); position: relative; }
-        .phone-avatar { 
-            width: 90px; height: 90px; background: #cbd5e1; border-radius: 50%; 
-            position: absolute; bottom: -45px; right: 50%; transform: translateX(50%);
-            border: 4px solid white; object-fit: cover;
-        }
-        .phone-body { padding: 60px 20px 20px; text-align: center; }
-        .name-txt { font-weight: 900; font-size: 22px; margin-bottom: 5px; }
-        .title-txt { color: #64748b; font-size: 14px; margin-bottom: 25px; }
-        .action-link { 
-            display: flex; align-items: center; justify-content: center; 
-            padding: 12px; background: #f1f5f9; border-radius: 12px; 
-            margin-bottom: 10px; text-decoration: none; color: #1e293b; font-weight: 700;
-        }
+        .preview-container.transparent-bg { background: transparent; border: 2px dashed rgba(255,255,255,0.2); box-shadow: none; }
+        .preview-container h3 { color: #0f172a; margin-top: 20px; font-weight: 900; }
+        .preview-container.transparent-bg h3 { color: white; }
 
-        /* QR Card */
-        .qr-card { background: white; padding: 30px; border-radius: 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .btn-save { background: #1e293b; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; }
+        /* الأزرار */
+        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; margin-top: 10px; font-size: 16px; }
+        .btn-pdf { background: var(--accent); color: white; }
+        .btn-png { background: transparent; color: white; border: 2px solid #334155; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
 <aside class="sidebar">
-    <span class="logo">Qrestige vCard</span>
-
-    <div class="section-title">بيانات البطاقة الرقمية</div>
-    <input type="text" id="v-name" placeholder="الاسم الكامل" oninput="sync()">
-    <input type="text" id="v-title" placeholder="المسمى الوظيفي" oninput="sync()">
-    <input type="tel" id="v-phone" placeholder="رقم الواتساب" oninput="sync()">
-    <input type="text" id="v-email" placeholder="البريد الإلكتروني" oninput="sync()">
-
-    <div class="section-title">تخصيص التصميم</div>
-    <div style="display:flex; gap:10px;">
-        <input type="color" id="c1" value="#6366f1" oninput="sync()" style="height:50px;">
-        <input type="color" id="c2" value="#4f46e5" oninput="sync()" style="height:50px;">
+    <h2>Qrestige vCard</h2>
+    
+    <div class="field">
+        <label>الاسم الكامل (عربي/إنجليزي)</label>
+        <input type="text" id="name" placeholder="مثال: محمد أحمد" oninput="update()">
+    </div>
+    <div class="field">
+        <label>المسمى الوظيفي</label>
+        <input type="text" id="title" placeholder="مثال: مدير تسويق" oninput="update()">
+    </div>
+    <div class="field">
+        <label>رقم الجوال</label>
+        <input type="tel" id="phone" placeholder="+9665..." oninput="update()">
+    </div>
+    <div class="field">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="email" placeholder="mail@example.com" oninput="update()">
     </div>
 
-    <div class="section-title">شكل الكود (Monkey Style)</div>
-    <select id="dot-style" onchange="sync()">
-        <option value="extra-rounded">نقاط دائرية</option>
-        <option value="square">مربعات كلاسيكية</option>
-        <option value="dots">نقاط صغيرة</option>
-    </select>
+    <div class="options-grid">
+        <div class="field">
+            <label>لون الكود</label>
+            <input type="color" id="color" value="#6366f1" oninput="update()">
+        </div>
+        <div class="field" style="display:flex; align-items:center; gap:5px; padding-top:25px;">
+            <input type="checkbox" id="trans" onchange="update()" style="width:20px; height:20px; cursor:pointer;">
+            <label style="margin:0; cursor:pointer;">خلفية شفافة</label>
+        </div>
+    </div>
 
-    <button class="btn-save" onclick="downloadPNG()">تحميل الكود PNG</button>
+    <button class="btn btn-pdf" onclick="exportPDF()">تحميل ملف PDF للطباعة</button>
+    <button class="btn btn-png" onclick="exportPNG()">تحميل صورة PNG</button>
 </aside>
 
 <main class="viewer">
-    <div class="phone-mockup">
-        <div class="phone-header" id="header-bg">
-            <img class="phone-avatar" id="avatar-img" src="https://via.placeholder.com/150">
-        </div>
-        <div class="phone-body">
-            <div class="name-txt" id="name-prev">محمد علي</div>
-            <div class="title-txt" id="title-prev">مصمم واجهات</div>
-            
-            <a href="#" class="action-link" id="wa-btn">💬 واتساب مباشر</a>
-            <a href="#" class="action-link" id="mail-btn">📧 البريد الإلكتروني</a>
-            <a href="#" class="action-link" style="background: #1e293b; color: white;">📥 حفظ في جهات الاتصال</a>
-        </div>
-    </div>
-
-    <div class="qr-card">
+    <div id="capture-area" class="preview-container">
         <div id="qr-target"></div>
-        <p style="font-weight: 900; margin-top: 15px;">كود الوصول السريع</p>
+        <h3 id="prev-name">الاسم الكريم</h3>
+        <p id="prev-title" style="color: #94a3b8; margin: 0;">المسمى الوظيفي</p>
     </div>
 </main>
 
 <script>
+    // ترميز النصوص العربية لضمان عملها على الآيفون والأندرويد
+    function encodeQP(str) {
+        if (!str) return "";
+        let utf8 = unescape(encodeURIComponent(str));
+        let result = "";
+        for (let i = 0; i < utf8.length; i++) {
+            result += "=" + utf8.charCodeAt(i).toString(16).toUpperCase();
+        }
+        return result;
+    }
+
     const qr = new QRCodeStyling({
-        width: 250, height: 250,
+        width: 300, height: 300,
         dotsOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" }
     });
 
     qr.append(document.getElementById("qr-target"));
 
-    function sync() {
-        const name = document.getElementById('v-name').value || "الاسم الكريم";
-        const title = document.getElementById('v-title').value || "المسمى الوظيفي";
-        const c1 = document.getElementById('c1').value;
-        const c2 = document.getElementById('c2').value;
-        const dotStyle = document.getElementById('dot-style').value;
+    function update() {
+        const name = document.getElementById('name').value || "الاسم الكريم";
+        const title = document.getElementById('title').value || "المسمى الوظيفي";
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+        const color = document.getElementById('color').value;
+        const isTrans = document.getElementById('trans').checked;
 
-        // تحديث محاكاة الهاتف
-        document.getElementById('name-prev').innerText = name;
-        document.getElementById('title-prev').innerText = title;
-        document.getElementById('header-bg').style.background = `linear-gradient(45deg, ${c1}, ${c2})`;
+        // تحديث المعاينة
+        document.getElementById('prev-name').innerText = name;
+        document.getElementById('prev-title').innerText = title;
+        document.getElementById('capture-area').className = isTrans ? 'preview-container transparent-bg' : 'preview-container';
 
-        // في المنصة الحقيقية: هذا الرابط سيكون رابط صفحة العميل المخزنة في قاعدة بياناتك
-        const demoLink = `https://qrestige.io/p/demo_user`;
+        // بناء الـ vCard
+        const vcard = [
+            "BEGIN:VCARD",
+            "VERSION:2.1",
+            `FN;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(name)}`,
+            `TITLE;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(title)}`,
+            `TEL;CELL:${phone}`,
+            `EMAIL;INTERNET:${email}`,
+            "END:VCARD"
+        ].join("\r\n");
 
         qr.update({
-            data: demoLink,
-            dotsOptions: { type: dotStyle, gradient: { type: "linear", colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] } },
-            cornersSquareOptions: { color: c1, type: 'extra-rounded' }
+            data: vcard,
+            dotsOptions: { color: color },
+            backgroundOptions: { color: isTrans ? "transparent" : "#ffffff" },
+            cornersSquareOptions: { color: color }
         });
     }
 
-    function downloadPNG() {
-        qr.download({ name: "Qrestige_vCard", extension: "png" });
+    async function exportPDF() {
+        const area = document.getElementById('capture-area');
+        const canvas = await html2canvas(area, { scale: 4, backgroundColor: null });
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width/2, canvas.height/2] });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width/2, canvas.height/2);
+        pdf.save("Business_Card_vCard.pdf");
     }
 
-    sync();
+    function exportPNG() {
+        qr.download({ name: "vCard_QR", extension: "png" });
+    }
+
+    // التشغيل الأولي
+    update();
 </script>
 </body>
 </html>
