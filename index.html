@@ -2,127 +2,103 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qrestige | Ultimate vCard Studio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>Qrestige Elite | الاستوديو المتكامل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
-        :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #6366f1;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --input-bg: #334155;
-        }
+        :root { --bg: #0b0f1a; --card: #161b2a; --accent: #4f46e5; --text: #e2e8f0; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; }
+        body { background: var(--bg); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; }
 
-        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-family: 'Tajawal', sans-serif !important; }
+        .sidebar { width: 420px; background: var(--card); border-left: 1px solid #2d3748; padding: 25px; overflow-y: auto; }
+        .logo-area { text-align: center; margin-bottom: 30px; }
+        .logo-area h1 { font-weight: 900; font-size: 28px; margin: 0; color: white; }
         
-        body { 
-            background: var(--bg); color: var(--text-main); margin: 0; 
-            display: flex; height: 100vh; overflow: hidden;
-        }
-
-        /* Sidebar UI */
-        .sidebar {
-            width: 400px; background: var(--card-bg); border-left: 1px solid #334155;
-            padding: 40px 30px; display: flex; flex-direction: column; overflow-y: auto;
-            box-shadow: 20px 0 50px rgba(0,0,0,0.3);
-        }
-
-        .header { margin-bottom: 40px; text-align: center; }
-        .header h1 { font-weight: 900; font-size: 32px; margin: 0; letter-spacing: -1px; }
-        .header p { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; margin-top: 5px; }
-
-        .section-title { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; margin: 25px 0 15px; letter-spacing: 1px; }
-
-        .input-box { margin-bottom: 15px; position: relative; }
+        .group { margin-bottom: 15px; }
+        .label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; margin-bottom: 6px; display: block; }
         input[type="text"], input[type="tel"], input[type="email"] {
-            width: 100%; background: var(--input-bg); border: 2px solid transparent;
-            padding: 14px 18px; border-radius: 14px; color: white; font-size: 15px; outline: none;
+            width: 100%; background: #1a202c; border: 1px solid #2d3748; padding: 12px; border-radius: 10px; color: white; outline: none;
         }
-        input:focus { border-color: var(--accent); background: #1e293b; box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+        input:focus { border-color: var(--accent); }
 
-        .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .color-item { background: var(--input-bg); padding: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; }
-        input[type="color"] { background: none; border: none; width: 40px; height: 35px; cursor: pointer; }
+        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #1a202c 0%, #0b0f1a 100%); }
+        .preview-box {
+            background: rgba(255,255,255,0.02); padding: 50px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+        }
+        .preview-box.trans { background: transparent; border: 2px dashed #2d3748; box-shadow: none; }
 
-        /* Viewer UI */
-        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); }
+        .user-photo { width: 80px; height: 80px; border-radius: 50%; background: #2d3748; margin-bottom: 15px; object-fit: cover; border: 3px solid var(--accent); }
         
-        .qr-preview-card {
-            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
-            padding: 60px; border-radius: 60px; border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; flex-direction: column; align-items: center;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
-            transform: perspective(1000px) rotateX(5deg);
-        }
-        .qr-preview-card:hover { transform: perspective(1000px) rotateX(0deg) scale(1.02); }
-
-        #canvas-target { background: white; padding: 25px; border-radius: 40px; box-shadow: 0 0 40px rgba(99, 102, 241, 0.3); }
-
-        /* Action Buttons */
-        .actions { margin-top: auto; padding-top: 30px; }
-        .btn-primary {
-            width: 100%; background: var(--accent); color: white; border: none;
-            padding: 18px; border-radius: 16px; font-weight: 900; font-size: 18px;
-            cursor: pointer; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
-        }
-        .btn-primary:hover { background: #4f46e5; transform: translateY(-3px); }
-        .btn-secondary {
-            width: 100%; background: transparent; color: white; border: 2px solid #334155;
-            padding: 14px; border-radius: 16px; margin-top: 12px; font-weight: 700; cursor: pointer;
-        }
-        .btn-secondary:hover { background: #334155; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--input-bg); border-radius: 10px; }
+        .btn-group { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
+        .btn-p { background: var(--accent); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; }
+        .btn-s { background: transparent; border: 1px solid #4a5568; color: white; padding: 10px; border-radius: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="header">
-            <h1>Qrestige</h1>
-            <p>Smart Arabic vCard Studio</p>
-        </div>
+<aside class="sidebar">
+    <div class="logo-area"><h1>Qrestige Elite</h1></div>
+    
+    <div class="group">
+        <span class="label">الصورة الشخصية</span>
+        <input type="file" id="photo-in" accept="image/*" onchange="handleImage(this)">
+    </div>
 
-        <div class="section-title">بيانات جهة الاتصال</div>
-        <div class="input-box"><input type="text" id="v-name" placeholder="الاسم الكامل" oninput="updateQR()"></div>
-        <div class="input-box"><input type="text" id="v-org" placeholder="المنصب أو الشركة" oninput="updateQR()"></div>
-        <div class="input-box"><input type="tel" id="v-tel" placeholder="رقم الجوال" oninput="updateQR()"></div>
-        <div class="input-box"><input type="email" id="v-email" placeholder="البريد الإلكتروني" oninput="updateQR()"></div>
+    <div class="group">
+        <span class="label">البيانات الأساسية</span>
+        <input type="text" id="v-name" placeholder="الاسم الكامل" oninput="update()">
+        <input type="text" id="v-title" placeholder="المسمى الوظيفي" oninput="update()" style="margin-top:5px">
+    </div>
 
-        <div class="section-title">هوية الكود</div>
-        <div class="color-grid">
-            <div class="color-item">
-                <span style="font-size: 11px; font-weight: 700;">اللون 1</span>
-                <input type="color" id="c1" value="#6366f1" oninput="updateQR()">
-            </div>
-            <div class="color-item">
-                <span style="font-size: 11px; font-weight: 700;">اللون 2</span>
-                <input type="color" id="c2" value="#a855f7" oninput="updateQR()">
-            </div>
-        </div>
+    <div class="group">
+        <span class="label">الاتصال</span>
+        <input type="tel" id="v-phone" placeholder="رقم الجوال" oninput="update()">
+        <input type="email" id="v-email" placeholder="البريد الإلكتروني" oninput="update()" style="margin-top:5px">
+    </div>
 
-        <div class="actions">
-            <button class="btn-primary" onclick="downloadQR()">تحميل الكود للطباعة</button>
-            <button class="btn-secondary" onclick="location.reload()">تفريغ البيانات</button>
-        </div>
-    </aside>
+    <div class="group">
+        <span class="label">العنوان والموقع</span>
+        <input type="text" id="v-adr" placeholder="العنوان (مثال: الرياض، السعودية)" oninput="update()">
+        <input type="text" id="v-url" placeholder="رابط الموقع أو LinkedIn" oninput="update()" style="margin-top:5px">
+    </div>
 
-    <main class="viewer">
-        <div class="qr-preview-card">
-            <div id="canvas-target"></div>
-            <div style="margin-top: 30px; text-align: center;">
-                <div id="name-label" style="font-size: 24px; font-weight: 900;">الاسم الكريم</div>
-                <div id="org-label" style="color: var(--text-dim); font-size: 14px; margin-top: 5px;">المسمى الوظيفي</div>
-            </div>
+    <div class="group">
+        <span class="label">التصميم</span>
+        <div style="display:flex; gap:10px;">
+            <input type="color" id="c1" value="#4f46e5" oninput="update()" style="flex:1; height:40px;">
+            <input type="color" id="c2" value="#9333ea" oninput="update()" style="flex:1; height:40px;">
         </div>
-    </main>
+    </div>
+
+    <div class="group">
+        <label style="cursor:pointer; font-size: 13px; font-weight: bold;">
+            <input type="checkbox" id="mode" onchange="update()"> خلفية شفافة
+        </label>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-p" onclick="exportPDF()">حفظ كملف PDF للطباعة</button>
+        <button class="btn-s" onclick="exportPNG()">تصدير صورة PNG</button>
+    </div>
+</aside>
+
+<main class="viewer">
+    <div id="capture-area" class="preview-box">
+        <img id="avatar-prev" class="user-photo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
+        <div id="qr-target"></div>
+        <div style="margin-top:20px">
+            <div id="p-name" style="font-size: 24px; font-weight: 900;">الاسم الكريم</div>
+            <div id="p-title" style="color: #718096; font-size: 14px;">المسمى الوظيفي</div>
+        </div>
+    </div>
+</main>
 
 <script>
+    // خوارزمية الترميز العربي QP (السر الذي يجعلها تعمل)
     function encodeQP(str) {
         if (!str) return "";
         let utf8 = unescape(encodeURIComponent(str));
@@ -133,48 +109,86 @@
         return result;
     }
 
+    let userImageData = null;
+
     const qr = new QRCodeStyling({
         width: 300, height: 300,
         dotsOptions: { type: "extra-rounded" },
         backgroundOptions: { color: "#ffffff" },
-        imageOptions: { margin: 10, imageSize: 0.4 }
+        imageOptions: { margin: 8, imageSize: 0.4, crossOrigin: "anonymous" }
     });
 
-    qr.append(document.getElementById("canvas-target"));
+    qr.append(document.getElementById("qr-target"));
 
-    function updateQR() {
-        const name = document.getElementById('v-name').value;
-        const org = document.getElementById('v-org').value;
-        const tel = document.getElementById('v-tel').value;
+    function handleImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                userImageData = e.target.result;
+                document.getElementById('avatar-prev').src = userImageData;
+                update();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function update() {
+        const name = document.getElementById('v-name').value || "الاسم الكريم";
+        const title = document.getElementById('v-title').value || "المسمى الوظيفي";
+        const phone = document.getElementById('v-phone').value;
         const email = document.getElementById('v-email').value;
-        const col1 = document.getElementById('c1').value;
-        const col2 = document.getElementById('c2').value;
+        const adr = document.getElementById('v-adr').value;
+        const url = document.getElementById('v-url').value;
+        const c1 = document.getElementById('c1').value;
+        const c2 = document.getElementById('c2').value;
+        const isTrans = document.getElementById('mode').checked;
 
-        document.getElementById('name-label').innerText = name || "الاسم الكريم";
-        document.getElementById('org-label').innerText = org || "المسمى الوظيفي";
+        document.getElementById('p-name').innerText = name;
+        document.getElementById('p-title').innerText = title;
+        document.getElementById('p-name').style.color = isTrans ? c1 : "white";
+        document.getElementById('capture-area').className = isTrans ? 'preview-box trans' : 'preview-box';
 
+        // بناء الـ vCard الاحترافي
         const vcard = [
             "BEGIN:VCARD",
             "VERSION:2.1",
             `FN;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(name)}`,
-            `ORG;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(org)}`,
-            `TEL;CELL:${tel}`,
+            `TITLE;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:${encodeQP(title)}`,
+            `ADR;HOME;ENCODING=QUOTED-PRINTABLE;CHARSET=utf-8:;;${encodeQP(adr)}`,
+            `TEL;CELL:${phone}`,
             `EMAIL;INTERNET:${email}`,
+            `URL:${url}`,
             "END:VCARD"
         ].join("\r\n");
 
         qr.update({
             data: vcard,
-            dotsOptions: { gradient: { type: "linear", colorStops: [{ offset: 0, color: col1 }, { offset: 1, color: col2 }] } },
-            cornersSquareOptions: { color: col1 }
+            dotsOptions: { gradient: { type: "linear", colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] } },
+            backgroundOptions: { color: isTrans ? "transparent" : "#ffffff" },
+            image: userImageData,
+            cornersSquareOptions: { color: c1 }
         });
     }
 
-    function downloadQR() {
-        qr.download({ name: "Qrestige_vCard_Pro", extension: "png" });
+    async function exportPDF() {
+        const area = document.getElementById('capture-area');
+        const canvas = await html2canvas(area, { scale: 4, backgroundColor: null });
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width/2, canvas.height/2] });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width/2, canvas.height/2);
+        pdf.save("Qrestige_Elite_vCard.pdf");
     }
 
-    updateQR();
+    async function exportPNG() {
+        const area = document.getElementById('capture-area');
+        const canvas = await html2canvas(area, { scale: 3, backgroundColor: null });
+        const link = document.createElement('a');
+        link.download = 'Qrestige_Elite.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+
+    update();
 </script>
 </body>
 </html>
