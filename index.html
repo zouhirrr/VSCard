@@ -1,188 +1,618 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>Qrestige Imperial | إصدار المحترفين</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root { --accent: #00d2ff; --bg: #050505; --panel: #111111; --gold: #d4af37; }
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif !important; transition: 0.2s; }
-        body { background: var(--bg); color: #fff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#060810">
+<title>م. خالد العمري — بطاقة أعمال رقمية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN: Ultra-luxury vCard — obsidian + liquid gold
+   FEATURE: Interactive theme switcher (7 palettes)
+   Cinematic loader, floating particles, save vCard
+═══════════════════════════════════════════════ */
 
-        .sidebar { width: 450px; background: var(--panel); border-left: 1px solid #222; padding: 25px; overflow-y: auto; scrollbar-width: thin; }
-        .sidebar h2 { font-weight: 900; letter-spacing: 1px; color: var(--gold); border-bottom: 1px solid #333; padding-bottom: 10px; }
+/* ── THEME VARIABLES (default: gold) ── */
+:root{
+  --accent:    #c8922a;
+  --accent2:   #e8b84b;
+  --accent3:   #f5d080;
+  --accent-bg: rgba(200,146,42,.1);
+  --accent-ln: rgba(200,146,42,.22);
 
-        .field-group { background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #222; }
-        label { font-size: 11px; font-weight: 800; color: #666; display: block; margin-bottom: 8px; }
-        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; outline: none; }
-        input:focus { border-color: var(--gold); }
+  --black:  #060810;
+  --dark:   #0c101a;
+  --dark2:  #121828;
+  --dark3:  #1a2235;
+  --white:  #f8f4ee;
+  --white2: #c8c2b8;
+  --muted:  #606878;
+  --line:   rgba(255,255,255,.07);
+  --wa:     #25D366;
+  --r-sm:10px;--r-md:18px;--r-lg:28px;
+}
 
-        .viewer { flex: 1; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #111, #000); position: relative; }
-        .main-card { background: #fff; padding: 40px; border-radius: 40px; text-align: center; box-shadow: 0 0 50px rgba(212,175,55,0.1); width: 450px; }
-        .main-card.dark-mode { background: #111; border: 1px solid #333; }
-        
-        .btn { padding: 14px; border-radius: 10px; border: none; font-weight: 900; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-gold { background: var(--gold); color: #000; }
-        .btn-outline { background: transparent; border: 1px solid #444; color: #fff; }
-        .btn:hover { transform: scale(1.02); filter: brightness(1.1); }
-        
-        .grid-colors { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px; }
-        .color-dot { height: 30px; border-radius: 5px; cursor: pointer; border: 1px solid #333; }
-    </style>
+/* ── PALETTE CLASSES applied to <body> ── */
+body.theme-gold  { --accent:#c8922a;--accent2:#e8b84b;--accent3:#f5d080;--accent-bg:rgba(200,146,42,.1);--accent-ln:rgba(200,146,42,.22) }
+body.theme-blue  { --accent:#1a6fc4;--accent2:#3d8fe0;--accent3:#80b8f8;--accent-bg:rgba(26,111,196,.1);--accent-ln:rgba(26,111,196,.25) }
+body.theme-teal  { --accent:#0f8c76;--accent2:#1ab898;--accent3:#5ee0c2;--accent-bg:rgba(15,140,118,.1);--accent-ln:rgba(15,140,118,.25) }
+body.theme-rose  { --accent:#c4264e;--accent2:#e84070;--accent3:#ff8fab;--accent-bg:rgba(196,38,78,.1);--accent-ln:rgba(196,38,78,.25) }
+body.theme-violet{ --accent:#7c3aed;--accent2:#9d5cf5;--accent3:#c4a0ff;--accent-bg:rgba(124,58,237,.1);--accent-ln:rgba(124,58,237,.25) }
+body.theme-silver{ --accent:#8a9ab0;--accent2:#b0c0d0;--accent3:#d8e4f0;--accent-bg:rgba(138,154,176,.1);--accent-ln:rgba(138,154,176,.25) }
+body.theme-red   { --accent:#c42a1a;--accent2:#e84830;--accent3:#ff8070;--accent-bg:rgba(196,42,26,.1);--accent-ln:rgba(196,42,26,.25) }
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Tajawal',sans-serif;
+  background:var(--black);
+  color:var(--white);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  transition:--accent .4s,--accent2 .4s,--accent3 .4s;
+}
+
+/* ═══ LOADER ═══ */
+#loader{
+  position:fixed;inset:0;z-index:1000;
+  background:var(--black);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  transition:opacity .7s,visibility .7s;
+}
+#loader.hide{opacity:0;visibility:hidden;pointer-events:none}
+.ld-ring{
+  width:44px;height:44px;border-radius:50%;
+  border:1.5px solid var(--accent-ln);
+  border-top-color:var(--accent2);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld-txt{font-size:.68rem;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+
+/* ═══ BG ═══ */
+.bg-glow{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% -5%, var(--accent-bg) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 100% 85%, rgba(30,60,100,.07) 0%, transparent 60%);
+  transition:background .5s;
+}
+.particle{
+  position:fixed;width:2px;height:2px;
+  background:var(--accent2);border-radius:50%;
+  pointer-events:none;z-index:0;opacity:0;
+  animation:pdrift var(--t,12s) ease-in-out infinite var(--d,0s);
+  transition:background .4s;
+}
+@keyframes pdrift{
+  0%{opacity:0;transform:translate(0,50px)}
+  15%{opacity:.5}85%{opacity:.2}
+  100%{opacity:0;transform:translate(var(--mx,20px),calc(-100vh - 50px))}
+}
+
+/* ═══ THEME SWITCHER PANEL ═══ */
+#theme-toggle{
+  position:fixed;top:50%;left:0;
+  transform:translateY(-50%);
+  z-index:500;
+  display:flex;flex-direction:column;align-items:flex-start;
+}
+.theme-tab{
+  background:var(--dark2);
+  border:1px solid var(--line);
+  border-right:none;
+  border-radius:0 0 0 0;
+  padding:10px 12px;
+  cursor:pointer;
+  font-size:.68rem;color:var(--white2);
+  letter-spacing:.06em;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  transform:rotate(180deg);
+  border-radius:6px 0 0 6px;
+  margin-bottom:4px;
+  transition:background .2s,color .2s,border-color .2s;
+  display:flex;align-items:center;gap:5px;
+  white-space:nowrap;
+}
+.theme-tab:hover{background:var(--dark3);color:var(--white)}
+/* open/close arrow */
+#theme-arrow{
+  background:var(--dark2);border:1px solid var(--accent-ln);
+  border-right:none;border-radius:6px 0 0 6px;
+  padding:11px 9px;cursor:pointer;
+  font-size:.8rem;color:var(--accent2);
+  transition:background .2s,border-color .3s;
+  margin-bottom:4px;
+}
+#theme-arrow:hover{background:var(--dark3)}
+
+.theme-panel{
+  background:var(--dark2);
+  border:1px solid var(--accent-ln);
+  border-right:none;
+  border-radius:12px 0 0 12px;
+  padding:14px 10px;
+  display:flex;flex-direction:column;gap:9px;
+  transition:transform .35s cubic-bezier(.2,.9,.3,1),opacity .35s;
+  transform:translateX(-110%);
+  opacity:0;
+  pointer-events:none;
+}
+.theme-panel.open{
+  transform:translateX(0);
+  opacity:1;
+  pointer-events:all;
+}
+.theme-panel-title{
+  font-size:.64rem;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;
+  text-align:center;padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:2px;
+}
+.tswatch{
+  width:32px;height:32px;border-radius:50%;
+  border:2px solid transparent;
+  cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto;
+  flex-shrink:0;
+}
+.tswatch:hover{transform:scale(1.15)}
+.tswatch.active{border-color:white;box-shadow:0 0 0 3px rgba(255,255,255,.15)}
+.tswatch::after{content:attr(data-label);
+  position:absolute;right:calc(100% + 8px);
+  background:var(--dark3);color:var(--white2);
+  font-size:.68rem;padding:3px 8px;border-radius:4px;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .2s;font-family:'Tajawal',sans-serif;
+}
+.tswatch:hover::after{opacity:1}
+/* swatch colors */
+.sw-gold  {background:linear-gradient(135deg,#c8922a,#f5d080)}
+.sw-blue  {background:linear-gradient(135deg,#1a6fc4,#80b8f8)}
+.sw-teal  {background:linear-gradient(135deg,#0f8c76,#5ee0c2)}
+.sw-rose  {background:linear-gradient(135deg,#c4264e,#ff8fab)}
+.sw-violet{background:linear-gradient(135deg,#7c3aed,#c4a0ff)}
+.sw-silver{background:linear-gradient(135deg,#8a9ab0,#d8e4f0)}
+.sw-red   {background:linear-gradient(135deg,#c42a1a,#ff8070)}
+
+/* ═══ CARD WRAPPER ═══ */
+.card{
+  position:relative;z-index:1;
+  max-width:430px;margin:0 auto;
+  padding:0 0 70px;
+  animation:cardIn 1s cubic-bezier(.16,1,.3,1) both .4s;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ HEADER ═══ */
+.card-header{
+  padding:52px 26px 30px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+.card-header::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:50px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent2),transparent);
+  transition:background .4s;
+}
+.avatar-wrap{width:96px;height:96px;margin:0 auto 18px;position:relative}
+.avatar{
+  width:100%;height:100%;border-radius:50%;
+  background:linear-gradient(145deg,var(--dark3),var(--dark2));
+  border:2px solid var(--accent-ln);
+  display:flex;align-items:center;justify-content:center;font-size:2.6rem;
+  position:relative;z-index:1;
+  box-shadow:0 0 0 4px var(--black),0 0 0 5px var(--accent-ln);
+  transition:border-color .4s,box-shadow .4s;
+}
+.avatar-ring{
+  position:absolute;inset:-7px;border-radius:50%;
+  border:1px solid transparent;
+  border-top-color:var(--accent2);
+  border-right-color:var(--accent-ln);
+  animation:spin 4s linear infinite;
+  transition:border-color .4s;
+}
+.status-dot{
+  position:absolute;bottom:3px;right:3px;
+  width:13px;height:13px;border-radius:50%;
+  background:#22c55e;border:2px solid var(--black);z-index:2;
+}
+.card-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.8rem;font-weight:700;
+  color:var(--white);letter-spacing:.01em;line-height:1.15;margin-bottom:4px;
+}
+.card-title{
+  font-size:.8rem;color:var(--accent2);font-weight:500;
+  letter-spacing:.09em;text-transform:uppercase;margin-bottom:4px;
+  transition:color .4s;
+}
+.card-company{font-size:.86rem;color:var(--white2);font-weight:300;margin-bottom:14px}
+.divider{display:flex;align-items:center;gap:10px;margin:0 auto 13px;width:fit-content}
+.divider::before,.divider::after{content:'';width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--accent));transition:background .4s}
+.divider::after{background:linear-gradient(90deg,var(--accent),transparent)}
+.div-diamond{width:5px;height:5px;background:var(--accent2);transform:rotate(45deg);flex-shrink:0;transition:background .4s}
+.card-bio{font-size:.84rem;color:var(--white2);line-height:1.82;max-width:290px;margin:0 auto;font-weight:300}
+
+/* ═══ QUICK ACTIONS ═══ */
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:18px 18px 0}
+.qa{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:13px 9px;border-radius:var(--r-md);
+  border:none;cursor:pointer;font-family:inherit;
+  font-size:.81rem;font-weight:700;text-decoration:none;
+  transition:transform .18s,box-shadow .18s,opacity .18s;
+  position:relative;overflow:hidden;
+}
+.qa::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .18s}
+.qa:hover{transform:translateY(-2px)}.qa:hover::after{background:rgba(255,255,255,.06)}
+.qa:active{transform:scale(.97)}
+.qa-wa{
+  background:linear-gradient(135deg,#1a9e50,var(--wa));color:white;
+  grid-column:1/-1;font-size:.88rem;padding:15px;
+  box-shadow:0 6px 20px rgba(37,211,102,.22);
+}
+.qa-wa:hover{box-shadow:0 10px 28px rgba(37,211,102,.35)}
+.qa-call{background:var(--dark2);color:var(--white);border:1px solid var(--line)}
+.qa-save{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:var(--black);font-weight:800;
+  box-shadow:0 6px 18px var(--accent-bg);
+  transition:transform .18s,box-shadow .18s,background .4s;
+}
+.qa-save:hover{box-shadow:0 10px 26px var(--accent-ln)}
+.qa svg{width:17px;height:17px;flex-shrink:0}
+
+/* ═══ SECTION BLOCK ═══ */
+.section{padding:18px 18px 0}
+.sec-label{
+  display:flex;align-items:center;gap:9px;
+  font-size:.66rem;color:var(--muted);
+  letter-spacing:.13em;text-transform:uppercase;
+  margin-bottom:11px;font-weight:700;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* ═══ CONTACT ITEMS ═══ */
+.ci{
+  display:flex;align-items:center;gap:13px;
+  background:var(--dark2);border-radius:var(--r-md);
+  padding:13px 15px;border:1px solid var(--line);
+  margin-bottom:7px;text-decoration:none;
+  transition:border-color .2s,transform .18s;
+  position:relative;overflow:hidden;
+}
+.ci::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--accent-bg),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.ci:hover{border-color:var(--accent-ln);transform:translateX(-3px)}
+.ci:hover::before{opacity:1}
+.ci-ico{
+  width:38px;height:38px;border-radius:11px;
+  background:var(--dark3);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;position:relative;z-index:1;
+  transition:border-color .2s;
+}
+.ci:hover .ci-ico{border-color:var(--accent-ln)}
+.ci-txt{position:relative;z-index:1;flex:1}
+.ci-lbl{display:block;font-size:.68rem;color:var(--muted);font-weight:600;margin-bottom:1px;letter-spacing:.04em}
+.ci-val{display:block;font-size:.88rem;color:var(--white);font-weight:500}
+.ci-arr{color:var(--muted);font-size:.78rem;position:relative;z-index:1;transition:color .2s,transform .2s;flex-shrink:0}
+.ci:hover .ci-arr{color:var(--accent2);transform:translateX(-3px)}
+
+/* ═══ SOCIAL ═══ */
+.social-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.soc{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:var(--dark2);border-radius:var(--r-md);
+  padding:13px 7px;border:1px solid var(--line);
+  text-decoration:none;
+  transition:border-color .2s,transform .18s,background .2s;
+}
+.soc:hover{border-color:var(--accent-ln);transform:translateY(-3px);background:var(--dark3)}
+.soc-ico{font-size:1.25rem;line-height:1}
+.soc-lbl{font-size:.63rem;color:var(--muted);font-weight:600}
+
+/* ═══ SERVICES ═══ */
+.srv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.srv{
+  background:var(--dark2);border-radius:var(--r-sm);
+  padding:11px 13px;border:1px solid var(--line);
+  border-right:2px solid var(--accent);
+  transition:border-color .2s,transform .18s;
+}
+.srv:hover{transform:translateX(-2px)}
+.srv-ico{font-size:1rem;margin-bottom:4px;display:block}
+.srv-name{font-size:.77rem;font-weight:700;color:var(--white);margin-bottom:1px}
+.srv-desc{font-size:.68rem;color:var(--muted)}
+
+/* ═══ QR ═══ */
+.qr-sec{
+  margin:18px 18px 0;
+  background:var(--dark2);border-radius:var(--r-lg);
+  padding:22px;border:1px solid var(--line);
+  text-align:center;position:relative;overflow:hidden;
+}
+.qr-sec::before{
+  content:'';position:absolute;top:-40px;left:-20px;
+  width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,var(--accent-bg),transparent 70%);
+}
+.qr-title{font-size:.72rem;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:14px;font-weight:700}
+.qr-box{
+  width:110px;height:110px;margin:0 auto 12px;
+  background:white;border-radius:10px;padding:9px;
+  display:flex;align-items:center;justify-content:center;
+}
+.qr-note{font-size:.72rem;color:var(--muted)}
+
+/* ═══ FOOTER ═══ */
+.card-foot{
+  margin-top:26px;padding:22px 18px 0;
+  border-top:1px solid var(--line);text-align:center;
+}
+.foot-logo{font-family:'Cormorant Garamond',serif;font-size:.95rem;color:var(--accent2);font-style:italic;letter-spacing:.05em;margin-bottom:5px;transition:color .4s}
+.foot-note{font-size:.68rem;color:var(--muted)}
+
+/* ═══ TOAST ═══ */
+#toast{
+  position:fixed;bottom:26px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--dark3);color:var(--white);
+  padding:11px 22px;border-radius:40px;
+  font-weight:700;font-size:.82rem;
+  border:1px solid var(--accent-ln);
+  box-shadow:0 8px 30px rgba(0,0,0,.5);
+  z-index:9999;pointer-events:none;
+  transition:transform .4s cubic-bezier(.2,.9,.3,1.2),border-color .4s;
+  white-space:nowrap;
+}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ═══ FADE-UP ═══ */
+.fu{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.fu.in{opacity:1;transform:translateY(0)}
+
+@media(max-width:480px){
+  .theme-tab{display:none}
+  #theme-arrow{padding:9px 8px;font-size:.75rem}
+}
+</style>
 </head>
-<body>
+<body class="theme-gold">
 
-<aside class="sidebar">
-    <h2>Qrestige Imperial</h2>
-    
-    <div class="field-group">
-        <label>البيانات الأساسية</label>
-        <input type="text" id="v-name" placeholder="الاسم الكامل" oninput="draw()">
-        <input type="text" id="v-title" placeholder="المسمى الوظيفي" oninput="draw()" style="margin-top:5px">
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-ring"></div>
+  <div class="ld-txt">جارٍ التحميل</div>
+</div>
+
+<!-- BG -->
+<div class="bg-glow"></div>
+<div class="particle" style="left:8%;--t:14s;--d:0s;--mx:28px"></div>
+<div class="particle" style="left:22%;--t:10s;--d:2s;--mx:-18px"></div>
+<div class="particle" style="left:48%;--t:16s;--d:4s;--mx:14px"></div>
+<div class="particle" style="left:68%;--t:11s;--d:1s;--mx:-24px"></div>
+<div class="particle" style="left:84%;--t:13s;--d:3s;--mx:10px"></div>
+
+<!-- ══════════════════════════════
+     THEME SWITCHER
+══════════════════════════════ -->
+<div id="theme-toggle">
+  <button id="theme-arrow" onclick="toggleThemePanel()" title="تغيير الألوان">🎨</button>
+  <div class="theme-panel" id="theme-panel">
+    <div class="theme-panel-title">اللون</div>
+    <div class="tswatch sw-gold  active" data-theme="gold"   data-label="ذهبي"   onclick="setTheme('gold',this)"   title="ذهبي"></div>
+    <div class="tswatch sw-blue  "       data-theme="blue"   data-label="أزرق"   onclick="setTheme('blue',this)"   title="أزرق"></div>
+    <div class="tswatch sw-teal  "       data-theme="teal"   data-label="أخضر"   onclick="setTheme('teal',this)"   title="أخضر"></div>
+    <div class="tswatch sw-rose  "       data-theme="rose"   data-label="وردي"   onclick="setTheme('rose',this)"   title="وردي"></div>
+    <div class="tswatch sw-violet"       data-theme="violet" data-label="بنفسجي" onclick="setTheme('violet',this)" title="بنفسجي"></div>
+    <div class="tswatch sw-silver"       data-theme="silver" data-label="فضي"    onclick="setTheme('silver',this)" title="فضي"></div>
+    <div class="tswatch sw-red   "       data-theme="red"    data-label="أحمر"   onclick="setTheme('red',this)"    title="أحمر"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     CARD
+══════════════════════════════ -->
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="card-header fu">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <div class="avatar">👨‍💼</div>
+      <div class="status-dot"></div>
     </div>
+    <div class="card-name">م. خالد العمري</div>
+    <div class="card-title">مدير تنفيذي · رائد أعمال</div>
+    <div class="card-company">العمري للاستشارات والاستثمار</div>
+    <div class="divider"><div class="div-diamond"></div></div>
+    <div class="card-bio">متخصص في الاستشارات المالية وإدارة الاستثمارات. خبرة تجاوزت 15 عاماً في السوق الخليجي.</div>
+  </div>
 
-    <div class="field-group">
-        <label>روابط التواصل</label>
-        <input type="tel" id="v-tel" placeholder="واتساب (مثال: 9665...)" oninput="draw()">
-        <input type="text" id="v-link" placeholder="رابط LinkedIn أو موقعك" oninput="draw()" style="margin-top:5px">
+  <!-- QUICK ACTIONS -->
+  <div class="quick-actions fu" style="transition-delay:.1s">
+    <a href="https://wa.me/966501234567" target="_blank" class="qa qa-wa">
+      <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      تواصل عبر واتساب
+    </a>
+    <a href="tel:+966501234567" class="qa qa-call">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .9h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11l-1.27 1.27a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      اتصال
+    </a>
+    <button class="qa qa-save" onclick="saveContact()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      حفظ جهة الاتصال
+    </button>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section fu" style="transition-delay:.2s">
+    <div class="sec-label">معلومات التواصل</div>
+    <a href="tel:+966501234567" class="ci">
+      <div class="ci-ico">📱</div>
+      <div class="ci-txt"><span class="ci-lbl">الهاتف</span><span class="ci-val" dir="ltr">+966 50 123 4567</span></div>
+      <span class="ci-arr">←</span>
+    </a>
+    <a href="mailto:khaled@omari.sa" class="ci">
+      <div class="ci-ico">✉️</div>
+      <div class="ci-txt"><span class="ci-lbl">البريد الإلكتروني</span><span class="ci-val">khaled@omari.sa</span></div>
+      <span class="ci-arr">←</span>
+    </a>
+    <a href="https://maps.google.com/?q=الرياض+العليا" target="_blank" class="ci">
+      <div class="ci-ico">📍</div>
+      <div class="ci-txt"><span class="ci-lbl">الموقع</span><span class="ci-val">حي العليا، الرياض، المملكة العربية السعودية</span></div>
+      <span class="ci-arr">←</span>
+    </a>
+    <a href="https://omari.sa" target="_blank" class="ci">
+      <div class="ci-ico">🌐</div>
+      <div class="ci-txt"><span class="ci-lbl">الموقع الإلكتروني</span><span class="ci-val">www.omari.sa</span></div>
+      <span class="ci-arr">←</span>
+    </a>
+  </div>
+
+  <!-- SOCIAL -->
+  <div class="section fu" style="transition-delay:.3s">
+    <div class="sec-label">التواصل الاجتماعي</div>
+    <div class="social-grid">
+      <a href="#" target="_blank" class="soc"><span class="soc-ico">📸</span><span class="soc-lbl">إنستغرام</span></a>
+      <a href="#" target="_blank" class="soc"><span class="soc-ico">💼</span><span class="soc-lbl">لينكدإن</span></a>
+      <a href="#" target="_blank" class="soc"><span class="soc-ico">🐦</span><span class="soc-lbl">تويتر/X</span></a>
+      <a href="#" target="_blank" class="soc"><span class="soc-ico">▶️</span><span class="soc-lbl">يوتيوب</span></a>
     </div>
+  </div>
 
-    <div class="field-group">
-        <label>تخصيص الهوية (الألوان)</label>
-        <div class="grid-colors">
-            <div class="color-dot" style="background:#d4af37" onclick="applyColor('#d4af37')"></div>
-            <div class="color-dot" style="background:#00d2ff" onclick="applyColor('#00d2ff')"></div>
-            <div class="color-dot" style="background:#ff0055" onclick="applyColor('#ff0055')"></div>
-            <div class="color-dot" style="background:#2ecc71" onclick="applyColor('#2ecc71')"></div>
-            <div class="color-dot" style="background:#ffffff" onclick="applyColor('#000000')"></div>
-        </div>
-        <input type="color" id="custom-color" oninput="applyColor(this.value)" style="margin-top:10px; height:30px; padding:0;">
+  <!-- SERVICES -->
+  <div class="section fu" style="transition-delay:.4s">
+    <div class="sec-label">خدماتي</div>
+    <div class="srv-grid">
+      <div class="srv"><span class="srv-ico">📊</span><div class="srv-name">الاستشارات المالية</div><div class="srv-desc">تخطيط وإدارة المحافظ</div></div>
+      <div class="srv"><span class="srv-ico">🏗️</span><div class="srv-name">الاستثمار العقاري</div><div class="srv-desc">توظيف رأس المال الأمثل</div></div>
+      <div class="srv"><span class="srv-ico">🤝</span><div class="srv-name">تأسيس الشركات</div><div class="srv-desc">دراسات الجدوى والترخيص</div></div>
+      <div class="srv"><span class="srv-ico">📈</span><div class="srv-name">التخطيط الاستراتيجي</div><div class="srv-desc">رؤية وخطة نمو متكاملة</div></div>
     </div>
+  </div>
 
-    <div class="field-group">
-        <label>صورة العلامة التجارية (Logo)</label>
-        <input type="file" accept="image/*" onchange="loadLogo(this)">
+  <!-- QR -->
+  <div class="qr-sec fu" style="transition-delay:.5s">
+    <div class="qr-title">امسح لمشاركة البطاقة</div>
+    <div class="qr-box">
+      <svg viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <path fill="#fff" d="M0 0h29v29H0z"/>
+        <path fill="#000" d="M0 0h7v1H0zM8 0h1v1H8zM10 0h3v1H10zM14 0h1v1H14zM16 0h2v1H16zM19 0h1v1H19zM22 0h7v1H22zM0 1h1v1H0zM6 1h1v1H6zM8 1h1v1H8zM11 1h2v1H11zM14 1h1v1H14zM16 1h1v1H16zM18 1h1v1H18zM22 1h1v1H22zM28 1h1v1H28zM0 2h1v1H0zM2 2h3v1H2zM6 2h1v1H6zM9 2h2v1H9zM12 2h1v1H12zM14 2h1v1H14zM16 2h3v1H16zM22 2h1v1H22zM24 2h3v1H24zM28 2h1v1H28zM0 3h1v1H0zM2 3h3v1H2zM6 3h1v1H6zM8 3h2v1H8zM12 3h2v1H12zM17 3h2v1H17zM20 3h1v1H20zM22 3h1v1H22zM24 3h3v1H24zM28 3h1v1H28zM0 4h1v1H0zM2 4h3v1H2zM6 4h1v1H6zM8 4h1v1H8zM11 4h1v1H11zM14 4h2v1H14zM17 4h1v1H17zM19 4h2v1H19zM22 4h1v1H22zM24 4h3v1H24zM28 4h1v1H28zM0 5h1v1H0zM6 5h1v1H6zM9 5h3v1H9zM14 5h1v1H14zM16 5h2v1H16zM19 5h1v1H19zM22 5h1v1H22zM28 5h1v1H28zM0 6h7v1H0zM8 6h1v1H8zM10 6h1v1H10zM12 6h1v1H12zM14 6h1v1H14zM16 6h1v1H16zM18 6h1v1H18zM20 6h1v1H20zM22 6h7v1H22zM8 7h3v1H8zM12 7h1v1H12zM14 7h2v1H14zM17 7h2v1H17zM20 7h1v1H20zM0 8h2v1H0zM3 8h1v1H3zM6 8h1v1H6zM9 8h2v1H9zM12 8h2v1H12zM16 8h2v1H16zM22 8h2v1H22zM25 8h1v1H25zM27 8h2v1H27zM0 9h1v1H0zM3 9h3v1H3zM8 9h1v1H8zM11 9h3v1H11zM15 9h3v1H15zM20 9h3v1H20zM26 9h3v1H26zM1 10h3v1H1zM6 10h2v1H6zM9 10h1v1H9zM12 10h3v1H12zM16 10h1v1H16zM19 10h1v1H19zM22 10h2v1H22zM25 10h2v1H25zM28 10h1v1H28zM0 11h2v1H0zM4 11h3v1H4zM9 11h2v1H9zM13 11h2v1H13zM16 11h3v1H16zM21 11h3v1H21zM26 11h3v1H26zM0 12h3v1H0zM5 12h2v1H5zM9 12h2v1H9zM13 12h1v1H13zM16 12h1v1H16zM19 12h2v1H19zM23 12h2v1H23zM27 12h2v1H27zM0 13h1v1H0zM3 13h2v1H3zM7 13h3v1H7zM13 13h3v1H13zM18 13h2v1H18zM22 13h1v1H22zM25 13h4v1H25zM0 14h7v1H0zM9 14h2v1H9zM12 14h2v1H12zM16 14h2v1H16zM20 14h2v1H20zM23 14h2v1H23zM27 14h2v1H27zM0 15h1v1H0zM6 15h1v1H6zM8 15h2v1H8zM12 15h1v1H12zM15 15h2v1H15zM19 15h3v1H19zM24 15h2v1H24zM28 15h1v1H28zM0 16h1v1H0zM2 16h3v1H2zM6 16h1v1H6zM8 16h1v1H8zM11 16h3v1H11zM15 16h1v1H15zM17 16h2v1H17zM21 16h4v1H21zM28 16h1v1H28zM0 17h1v1H0zM2 17h3v1H2zM6 17h1v1H6zM9 17h2v1H9zM13 17h4v1H13zM19 17h1v1H19zM22 17h2v1H22zM25 17h4v1H25zM0 18h1v1H0zM2 18h3v1H2zM6 18h1v1H6zM8 18h1v1H8zM11 18h2v1H11zM15 18h2v1H15zM19 18h3v1H19zM24 18h1v1H24zM27 18h2v1H27zM0 19h1v1H0zM6 19h1v1H6zM9 19h3v1H9zM14 19h1v1H14zM17 19h2v1H17zM21 19h1v1H21zM24 19h1v1H24zM27 19h2v1H27zM0 20h7v1H0zM8 20h3v1H8zM13 20h1v1H13zM16 20h2v1H16zM20 20h2v1H20zM24 20h2v1H24zM28 20h1v1H28zM8 21h1v1H8zM11 21h2v1H11zM14 21h3v1H14zM19 21h2v1H19zM23 21h2v1H23zM27 21h2v1H27zM0 22h4v1H0zM6 22h2v1H6zM10 22h1v1H10zM13 22h2v1H13zM17 22h2v1H17zM21 22h2v1H21zM25 22h4v1H25zM0 23h1v1H0zM4 23h2v1H4zM8 23h3v1H8zM13 23h1v1H13zM16 23h3v1H16zM21 23h1v1H21zM23 23h2v1H23zM27 23h2v1H27zM1 24h2v1H1zM5 24h1v1H5zM8 24h2v1H8zM12 24h3v1H12zM17 24h2v1H17zM21 24h3v1H21zM26 24h1v1H26zM28 24h1v1H28zM0 25h2v1H0zM4 25h3v1H4zM9 25h1v1H9zM12 25h2v1H12zM16 25h1v1H16zM19 25h3v1H19zM24 25h2v1H24zM28 25h1v1H28zM0 26h2v1H0zM4 26h1v1H4zM7 26h2v1H7zM11 26h3v1H11zM16 26h2v1H16zM20 26h1v1H20zM23 26h2v1H23zM27 26h2v1H27zM0 27h3v1H0zM5 27h2v1H5zM9 27h1v1H9zM12 27h2v1H12zM16 27h1v1H16zM19 27h1v1H19zM22 27h3v1H22zM27 27h2v1H27zM0 28h7v1H0zM9 28h2v1H9zM13 28h1v1H13zM16 28h3v1H16zM21 28h2v1H21zM25 28h4v1H25z"/>
+      </svg>
     </div>
+    <div class="qr-note">امسح للوصول السريع للبطاقة</div>
+  </div>
 
-    <div class="field-group">
-        <label>خيارات العرض</label>
-        <select id="qr-dots" onchange="draw()">
-            <option value="extra-rounded">نقاط ناعمة</option>
-            <option value="classy-rounded">نقاط فخمة</option>
-            <option value="square">مربعات هندسية</option>
-        </select>
-        <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
-            <input type="checkbox" id="is-trans" onchange="draw()" style="width:20px;">
-            <label style="margin:0">خلفية شفافة</label>
-        </div>
-    </div>
+  <!-- FOOTER -->
+  <div class="card-foot fu" style="transition-delay:.6s">
+    <div class="foot-logo">Khaled Al-Omari</div>
+    <div class="foot-note">© 2025 — بطاقة أعمال رقمية</div>
+  </div>
 
-    <button class="btn btn-gold" onclick="exportPDF()">📄 تصدير PDF للطباعة الفاخرة</button>
-    <button class="btn btn-outline" onclick="exportPNG()">🖼️ حفظ كصورة PNG</button>
-    <button class="btn btn-outline" onclick="exportVCF()">📥 تحميل ملف vCard</button>
-</aside>
+</div><!-- /card -->
 
-<main class="viewer">
-    <div id="capture-box" class="main-card">
-        <div id="qr-display"></div>
-        <div style="margin-top:25px; border-top:1px solid #f0f0f0; padding-top:20px;">
-            <div id="p-name" style="font-size:28px; font-weight:900; color:#111">الاسم الكريم</div>
-            <div id="p-title" style="color:#888; font-size:15px; margin-top:5px;">المسمى الوظيفي</div>
-            <div id="p-tel" style="color:#d4af37; font-weight:bold; margin-top:10px; font-size:14px;"></div>
-        </div>
-    </div>
-</main>
+<div id="toast">✅ تم!</div>
 
 <script>
-    function encodeQP(str) {
-        if (!str) return "";
-        let utf8 = unescape(encodeURIComponent(str));
-        let result = "";
-        for (let i = 0; i < utf8.length; i++) {
-            result += "=" + utf8.charCodeAt(i).toString(16).toUpperCase();
-        }
-        return result;
-    }
+/* ── LOADER ── */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('hide');
+    setTimeout(()=>{
+      document.querySelectorAll('.fu').forEach((el,i)=>{
+        setTimeout(()=>el.classList.add('in'),i*90);
+      });
+    },200);
+  },900);
+});
 
-    let currentLogo = null;
-    let mainColor = "#d4af37";
+/* ── THEME SWITCHER ── */
+let panelOpen = false;
 
-    const qr = new QRCodeStyling({
-        width: 350, height: 350,
-        dotsOptions: { type: "extra-rounded", color: mainColor },
-        imageOptions: { margin: 10, imageSize: 0.4, crossOrigin: "anonymous" },
-        backgroundOptions: { color: "#ffffff" }
-    });
+function toggleThemePanel(){
+  panelOpen = !panelOpen;
+  document.getElementById('theme-panel').classList.toggle('open', panelOpen);
+  document.getElementById('theme-arrow').textContent = panelOpen ? '✕' : '🎨';
+}
 
-    qr.append(document.getElementById("qr-display"));
+function setTheme(theme, el){
+  // update body class
+  document.body.className = 'theme-' + theme;
+  // update active swatch
+  document.querySelectorAll('.tswatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  // close panel after short delay
+  setTimeout(() => {
+    panelOpen = false;
+    document.getElementById('theme-panel').classList.remove('open');
+    document.getElementById('theme-arrow').textContent = '🎨';
+  }, 400);
 
-    function loadLogo(input) {
-        if (input.files && input.files[0]) {
-            const r = new FileReader();
-            r.onload = e => { currentLogo = e.target.result; draw(); };
-            r.readAsDataURL(input.files[0]);
-        }
-    }
+  const names = {gold:'ذهبي',blue:'أزرق',teal:'أخضر',rose:'وردي',violet:'بنفسجي',silver:'فضي',red:'أحمر'};
+  showToast('🎨 تم تغيير اللون إلى ' + names[theme]);
+}
 
-    function applyColor(color) {
-        mainColor = color;
-        draw();
-    }
+/* ── SAVE vCARD ── */
+function saveContact(){
+  const vcard = [
+    'BEGIN:VCARD','VERSION:3.0',
+    'FN:م. خالد العمري',
+    'N:العمري;خالد;;;',
+    'ORG:العمري للاستشارات والاستثمار',
+    'TITLE:مدير تنفيذي',
+    'TEL;TYPE=CELL:+966501234567',
+    'EMAIL:khaled@omari.sa',
+    'URL:https://omari.sa',
+    'ADR;TYPE=WORK:;;حي العليا;الرياض;;;المملكة العربية السعودية',
+    'END:VCARD'
+  ].join('\n');
+  const blob = new Blob([vcard],{type:'text/vcard;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download='khaled-alomari.vcf';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('✅ تم حفظ جهة الاتصال في هاتفك!');
+}
 
-    function draw() {
-        const name = document.getElementById('v-name').value || "الاسم الكريم";
-        const title = document.getElementById('v-title').value || "المسمى الوظيفي";
-        const tel = document.getElementById('v-tel').value;
-        const link = document.getElementById('v-link').value;
-        const isT = document.getElementById('is-trans').checked;
-        const dotType = document.getElementById('qr-dots').value;
+/* ── TOAST ── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
 
-        document.getElementById('p-name').innerText = name;
-        document.getElementById('p-title').innerText = title;
-        document.getElementById('p-tel').innerText = tel ? "📱 " + tel : "";
-        document.getElementById('p-name').style.color = isT ? mainColor : "#111";
-        document.getElementById('capture-box').style.background = isT ? "transparent" : "#fff";
-        document.getElementById('capture-box').style.border = isT ? "2px dashed #444" : "none";
+/* ── CLICK RIPPLE FEEDBACK ── */
+document.querySelectorAll('.ci,.soc,.qa,.srv').forEach(el=>{
+  el.addEventListener('click',function(){
+    this.style.opacity='.65';
+    setTimeout(()=>this.style.opacity='',140);
+  });
+});
 
-        const vcard = [
-            "BEGIN:VCARD", "VERSION:3.0",
-            `FN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:${encodeQP(name)}`,
-            `TITLE;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:${encodeQP(title)}`,
-            `TEL;TYPE=CELL,VOICE:${tel}`,
-            `URL:${link}`, "END:VCARD"
-        ].join("\r\n");
-
-        qr.update({
-            data: vcard,
-            dotsOptions: { color: mainColor, type: dotType },
-            cornersSquareOptions: { color: mainColor, type: "extra-rounded" },
-            backgroundOptions: { color: isT ? "transparent" : "#ffffff" },
-            image: currentLogo
-        });
-    }
-
-    async function exportPDF() {
-        const node = document.getElementById('capture-box');
-        const canvas = await html2canvas(node, { scale: 5, backgroundColor: null });
-        const pdf = new jspdf.jsPDF('p', 'px', [canvas.width/2, canvas.height/2]);
-        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width/2, canvas.height/2);
-        pdf.save(`${document.getElementById('v-name').value || 'Qrestige'}_Imperial.pdf`);
-    }
-
-    function exportPNG() { qr.download({ name: "Qrestige_vCard", extension: "png" }); }
-
-    function exportVCF() {
-        const n = document.getElementById('v-name').value || "Contact";
-        const data = `BEGIN:VCARD\nVERSION:3.0\nFN:${n}\nTEL:${document.getElementById('v-tel').value}\nEND:VCARD`;
-        const blob = new Blob([data], { type: 'text/vcard' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `${n}.vcf`; a.click();
-    }
-
-    draw();
+/* ── CLOSE PANEL ON OUTSIDE CLICK ── */
+document.addEventListener('click', e => {
+  if(panelOpen && !document.getElementById('theme-toggle').contains(e.target)){
+    panelOpen = false;
+    document.getElementById('theme-panel').classList.remove('open');
+    document.getElementById('theme-arrow').textContent = '🎨';
+  }
+});
 </script>
 </body>
 </html>
